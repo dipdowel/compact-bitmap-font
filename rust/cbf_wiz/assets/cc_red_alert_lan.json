@@ -1,0 +1,20 @@
+{
+  "char_order": " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~",
+  "default_char": "?",
+  "spacing": {
+    "kerning_px": 5,
+    "leading_px": 10
+  },
+  "meta": {
+    "font_ver": 1,
+    "date_year": 2023,
+    "date_month": 5,
+    "date_day": 28,
+    "font_name": "ExampleFont",
+    "author_signature": "Author"
+  },
+  "sample_text": [
+    "First line of text",
+    "Second line of text"
+  ]
+}
