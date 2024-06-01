@@ -3,13 +3,13 @@ use std::fmt;
 use std::fmt::Display;
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Spacing {
+pub struct SpacingWiz {
     pub kerning_px: u8,
     pub leading_px: u8,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PixelFontMeta {
+pub struct PixelFontMetaWiz {
     pub font_ver: u16,
     pub date_year: u16,
     pub date_month: u8,
@@ -19,16 +19,16 @@ pub struct PixelFontMeta {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PixelFont {
+pub struct PixelFontWiz {
     pub char_order: String,
     pub default_char: String,
-    pub spacing: Spacing,
-    pub meta: PixelFontMeta,
+    pub spacing: SpacingWiz,
+    pub meta: PixelFontMetaWiz,
     pub sample_text: Vec<String>,
 }
-impl Display for PixelFont {
+impl Display for PixelFontWiz {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let PixelFontMeta {
+        let PixelFontMetaWiz {
             font_ver,
             date_year,
             date_month,

@@ -4,7 +4,7 @@ use image::io::Reader as ImageReader;
 use image::{DynamicImage, GenericImageView};
 use crate::types::Dimensions2d;
 
-/// Reads a file from an image, converts it to 0RGB format and writes to a provided `buf`.
+/// Reads an image from a file, converts it to 0RGB format and writes to a provided `buf`.
 /// - On success returns `true`.
 /// - On failure writes an error to `stderr` and returns `false`.
 /// `buf` is cleared before it gets populated by the pixels

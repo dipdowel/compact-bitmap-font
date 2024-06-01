@@ -1,5 +1,5 @@
 use crate::cli::CliArguments;
-use crate::font::{PixelFont, PixelFontMeta};
+use crate::font::{PixelFontWiz, PixelFontMetaWiz};
 use crate::utils::io::file::read_image;
 use crate::utils::log::print_verbose;
 use clap::Parser;
@@ -59,16 +59,14 @@ fn main() {
         verbose,
     );
 
-
-
-    let PixelFont {
+    let PixelFontWiz {
         char_order,
         default_char,
         spacing,
         sample_text,
         meta,
     } = font_info;
-    let PixelFontMeta {
+    let PixelFontMetaWiz {
         font_name,
         author_signature,
         date_day,

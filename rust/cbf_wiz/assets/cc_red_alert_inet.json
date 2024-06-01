@@ -1,0 +1,20 @@
+{
+  "char_order": " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~",
+  "default_char": "?",
+  "spacing": {
+    "kerning_px": 2,
+    "leading_px": 10
+  },
+  "meta": {
+    "font_ver": 1,
+    "date_year": 2008,
+    "date_month": 2,
+    "date_day": 6,
+    "font_name": "cc_red_alert_inet",
+    "author_signature": "N3tRunn3r (N3tRunn3r@hotmail.de)"
+  },
+  "sample_text": [
+    "First line of text",
+    "Second line of text"
+  ]
+}
