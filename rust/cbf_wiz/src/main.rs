@@ -1,14 +1,14 @@
 use crate::cli::CliArguments;
-use crate::font::{PixelFontWiz, PixelFontMetaWiz};
+use crate::font::{PixelFontMetaWiz, PixelFontWiz};
+use crate::utils::bit_operations;
 use crate::utils::io::file::read_image;
 use crate::utils::log::print_verbose;
-use clap::Parser;
-use std::process;
-use image::EncodableLayout;
-use crate::utils::bit_operations;
 use crate::utils::text::utf8_char_to_u16_vec;
 use crate::write_result_helper::create_dir_and_write_file;
+use clap::Parser;
+use image::EncodableLayout;
 use std::io::Write;
+use std::process;
 mod cli;
 mod json;
 
@@ -43,9 +43,17 @@ fn main() {
 
     // Read and parse the font source image
     // ====================================
+
+    // This buffer will contain font with the glyph width marks.
+    // It should be used for figuring out the glyph widths.
     let mut font_image_buf: Vec<u32> = Vec::new();
+
+    // This buffer will contain a cropped image with just the font (the size marks removed).
+    // It should be packed into the resulting CBF file.
+    let mut font_image_buf_cropped: Vec<u32> = Vec::new();
+
     print_verbose("Reading the font image", verbose);
-    let image_dimensions = read_image(&font_image_path, &mut font_image_buf, verbose)
+    let image_dimensions = read_image(&font_image_path, &mut font_image_buf,  &mut font_image_buf_cropped, verbose)
         .unwrap_or_else(|e| {
             eprintln!("Failed to read the font image or its dimensions. {}\n\t", e);
             process::exit(1);
@@ -54,10 +62,19 @@ fn main() {
     print_verbose(
         &format!(
             "Font source image width: {}, height: {} ",
-            image_dimensions.w, image_dimensions.h
+            image_dimensions.original.w, image_dimensions.original.h
         ),
         verbose,
     );
+    print_verbose(
+        &format!(
+            "Font image to pack. Width: {}, height: {} ",
+            image_dimensions.cropped.w, image_dimensions.cropped.h
+        ),
+        verbose,
+    );
+
+
 
     let PixelFontWiz {
         char_order,
@@ -80,7 +97,6 @@ fn main() {
 
     // default_char.
 
-
     // Get the first character
     let default_char = if let Some(first_char) = default_char.chars().next() {
         first_char
@@ -88,18 +104,15 @@ fn main() {
         '?'
     };
 
-
     let default_char_parts = utf8_char_to_u16_vec(default_char);
 
-    let char_widths_map = glyph_helper::get_width(
-        &font_image_buf,
-        &image_dimensions,
-        &char_order,
-        verbose,
-    );
+    let char_widths_map =
+        glyph_helper::get_width(&font_image_buf, &image_dimensions.original, &char_order, verbose);
 
-
-    let char_widths: Vec<u8> = char_order.chars().map(|ch| { *char_widths_map.get(&ch).unwrap() }).collect();
+    let char_widths: Vec<u8> = char_order
+        .chars()
+        .map(|ch| *char_widths_map.get(&ch).unwrap())
+        .collect();
 
     // FILL IN THE HEADER
     // ------------------
@@ -116,8 +129,8 @@ fn main() {
     font_header[5] = char_widths.len() as u16;
 
     // Font image and font properties
-    font_header[6] = image_dimensions.w as u16;
-    font_header[7] = image_dimensions.h as u16;
+    font_header[6] = image_dimensions.cropped.w as u16;
+    font_header[7] = image_dimensions.cropped.h as u16;
     font_header[8] = spacing_props;
 
     // The font's default char (utf8, hence can be up to 4 bytes, hence 2 u16 values needed.
@@ -135,22 +148,20 @@ fn main() {
     font_body.extend(author_signature.as_bytes());
     font_body.extend(char_order.as_bytes());
     font_body.extend(char_widths);
-    font_body.extend(bit_operations::rgb_to_one_bit_image(&font_image_buf));
-
+    font_body.extend(bit_operations::rgb_to_one_bit_image(&font_image_buf_cropped));
 
     // SAVE AND WRITE
     // --------------
 
-    let file_name = format!("{}.cbf",font_name);
+    let file_name = format!("{}.cbf", font_name);
 
-    create_dir_and_write_file(&output_dir, &file_name, &font_header, &font_body).unwrap_or_else(|e| {
-        eprintln!(
-            "Oops... Failed to write the resulting font to {output_dir}.\n{}",
-            e
-        );
-        process::exit(1);
-    });
-
-
-
+    create_dir_and_write_file(&output_dir, &file_name, &font_header, &font_body).unwrap_or_else(
+        |e| {
+            eprintln!(
+                "Oops... Failed to write the resulting font to {output_dir}.\n{}",
+                e
+            );
+            process::exit(1);
+        },
+    );
 }

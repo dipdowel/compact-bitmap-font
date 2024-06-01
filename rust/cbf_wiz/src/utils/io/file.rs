@@ -1,14 +1,25 @@
-use core::result::Result::Err;
+use crate::types::Dimensions2d;
 use crate::utils::log::print_verbose;
+use core::result::Result::Err;
 use image::io::Reader as ImageReader;
 use image::{DynamicImage, GenericImageView};
-use crate::types::Dimensions2d;
+
+pub struct FontImageDim {
+    pub original: Dimensions2d,
+    pub cropped:Dimensions2d
+}
 
 /// Reads an image from a file, converts it to 0RGB format and writes to a provided `buf`.
 /// - On success returns `true`.
 /// - On failure writes an error to `stderr` and returns `false`.
-/// `buf` is cleared before it gets populated by the pixels
-pub fn read_image(path: &str, buf: &mut Vec<u32>, verbose: bool) -> Result<Dimensions2d, String> {
+/// `buf_marked`, an empty buffer, for the original source image with glyph size marks.
+/// `buf_cropped`, an empty buffer, for the image prepared to be packed into the resulting font file.
+pub fn read_image(
+    path: &str,
+    buf_marked: &mut Vec<u32>,
+    buf_cropped: &mut Vec<u32>,
+    verbose: bool,
+) -> Result<FontImageDim, String> {
     let file_open_result = ImageReader::open(path);
 
     let reader = match file_open_result {
@@ -23,7 +34,7 @@ pub fn read_image(path: &str, buf: &mut Vec<u32>, verbose: bool) -> Result<Dimen
 
     let image_result = reader.decode();
 
-    let image = match image_result {
+    let mut image = match image_result {
         Ok(image) => {
             print_verbose("Image decoded successfully!", verbose);
             image
@@ -33,15 +44,26 @@ pub fn read_image(path: &str, buf: &mut Vec<u32>, verbose: bool) -> Result<Dimen
         }
     };
 
-    let dimensions = Dimensions2d {
+    convert_to_0rgb(image.clone(), buf_marked);
+
+    let dimensions_original = Dimensions2d {
         w: image.width(),
         h: image.height(),
     };
 
-    // println!("{:?}", image);
+    image = image.crop_imm(1, 1, image.width() - 2, image.height() - 1);
 
-    convert_to_0rgb(image, buf);
-    return Ok(dimensions);
+    let dimensions_cropped = Dimensions2d {
+        w: image.width(),
+        h: image.height(),
+    };
+
+    convert_to_0rgb(image.clone(), buf_cropped);
+
+    return Ok(FontImageDim{
+        original:dimensions_original,
+        cropped:dimensions_cropped
+    });
 }
 
 /// Converts a `DynamicImage` instance to 0RGB model and writes the result to `buf`
