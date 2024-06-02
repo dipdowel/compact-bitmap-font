@@ -1,12 +1,12 @@
-use crate::types::Dimensions2d;
+use crate::types::Dimensions2dWiz;
 use crate::utils::log::print_verbose;
 use core::result::Result::Err;
 use image::io::Reader as ImageReader;
 use image::{DynamicImage, GenericImageView};
 
 pub struct FontImageDim {
-    pub original: Dimensions2d,
-    pub cropped:Dimensions2d
+    pub original: Dimensions2dWiz,
+    pub cropped: Dimensions2dWiz,
 }
 
 /// Reads an image from a file, converts it to 0RGB format and writes to a provided `buf`.
@@ -46,23 +46,23 @@ pub fn read_image(
 
     convert_to_0rgb(image.clone(), buf_marked);
 
-    let dimensions_original = Dimensions2d {
+    let dimensions_original = Dimensions2dWiz {
         w: image.width(),
         h: image.height(),
     };
 
     image = image.crop_imm(1, 1, image.width() - 2, image.height() - 1);
 
-    let dimensions_cropped = Dimensions2d {
+    let dimensions_cropped = Dimensions2dWiz {
         w: image.width(),
         h: image.height(),
     };
 
     convert_to_0rgb(image.clone(), buf_cropped);
 
-    return Ok(FontImageDim{
-        original:dimensions_original,
-        cropped:dimensions_cropped
+    return Ok(FontImageDim {
+        original: dimensions_original,
+        cropped: dimensions_cropped,
     });
 }
 

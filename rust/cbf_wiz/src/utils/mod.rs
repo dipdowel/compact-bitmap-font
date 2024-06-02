@@ -1,4 +1,4 @@
-pub mod log;
-pub mod io;
-pub mod text;
 pub mod bit_operations;
+pub mod io;
+pub mod log;
+pub mod text;

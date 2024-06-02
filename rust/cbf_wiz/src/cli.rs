@@ -23,7 +23,6 @@ use clap::{ArgGroup, Parser};
 //     .args(&["debug", "quiet"])
 // ))]
 pub struct CliArguments {
-
     /// Image with glyphs of the font
     #[arg(short = 'i', long = "image", value_name = "source-font-image.[png]")]
     pub font_image_path: String,
@@ -39,7 +38,6 @@ pub struct CliArguments {
     /// Verbose mode
     #[arg(short, long)]
     pub verbose: bool,
-
     // /// Input file to use
     // #[arg(value_name = "font-source-image.[png]", index = 1)]
     // pub src_image_path: String,
