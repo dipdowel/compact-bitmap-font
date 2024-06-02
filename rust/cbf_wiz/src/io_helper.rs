@@ -1,10 +1,10 @@
 use std::fs;
 use std::fs::File;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
-/// Creates a directory if it doesn't exist, then writes a file into it.
-pub fn create_dir_and_write_file(dir: &str, file_name: &str, font_header: &[u16], font_body: &[u8]) -> std::io::Result<()> {
+/// Saves the CBF data to a file and returns the path to where the file was written
+pub fn write_cbf_to_file(dir: &str, file_name: &str, font_header: &[u16], font_body: &[u8], path_buf: &mut PathBuf) -> std::io::Result<()> {
 
     let path = Path::new(dir);
 
@@ -13,6 +13,9 @@ pub fn create_dir_and_write_file(dir: &str, file_name: &str, font_header: &[u16]
     }
 
     let file_path = path.join(file_name);
+
+    *path_buf = file_path.clone();
+
     let mut file = File::create(file_path)?;
 
 

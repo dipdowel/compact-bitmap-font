@@ -1,7 +1,7 @@
 use std::fmt::Display;
 use std::fs;
 use miniserde::json;
-use crate::font::PixelFontWiz;
+use crate::font_wiz::PixelFontWiz;
 use crate::utils::log::print_verbose;
 
 /// Reads and parses a JSON file at `file_path` into PixelFont
