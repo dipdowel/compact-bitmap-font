@@ -13,7 +13,7 @@ pub fn get_width(
     let total_width: usize = image_dimensions.w as usize;
     let mut cur_char_index: usize = 0;
     let mut cur_char_width: usize = 0;
-    let mut is_over_glyph = false;
+    let mut is_over_glyph;
     let mut result: HashMap<char, u8> = HashMap::new();
 
     print_verbose(

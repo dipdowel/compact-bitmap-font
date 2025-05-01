@@ -7,11 +7,11 @@ use graph1::text::{font_embedder, printer};
 use graph1::text::font::Spacing;
 use graph1::utils::color;
 use graph1::utils::color::palettes::{OceanBreeze, RetroNeon, TropicalParadise};
-use crate::utils::text;
+
 
 /// Generates and returns an image using the font provided as CBF data.
 pub fn make_sample(
-    mut cbf_data: Vec<u8>,
+    cbf_data: Vec<u8>,
     sample_text: Vec<String>,
     sample_image_size: &Dimensions2d,
 ) -> Vec<u32> {
@@ -154,7 +154,7 @@ pub fn make_sample(
         },
         &font_4,
         &ColorProperties {
-            color_transformer: Some(|color: u32, x: u32, y: u32, w: u32, h: u32, data| -> u32 {
+            color_transformer: Some(|_color: u32, _x: u32, y: u32, _w: u32, _h: u32, _data| -> u32 {
                 if y % 2 == 0 {
                     return RetroNeon::GLITCH_RED ;
                 }
@@ -184,7 +184,7 @@ pub fn make_sample(
     );
 
 
-    
+
 
     printer::print_line(
         &mut ctx,
@@ -194,7 +194,7 @@ pub fn make_sample(
         },
         &font_8,
         &ColorProperties {
-            color_transformer: Some(|color: u32, x: u32, y: u32, w: u32, h: u32, data| -> u32 {
+            color_transformer: Some(|_color: u32, _x: u32, y: u32, _w: u32, _h: u32, _data| -> u32 {
                 if y % 2 == 0 {
                     return 0x000000ff ;
                 }
@@ -205,9 +205,9 @@ pub fn make_sample(
             color: None,
             data: None,
         },
-    
+
         &format!("8x:{}", font_8.char_order.clone()),
-    
+
     );
 
     // PRINT PROVIDED SAMPLE TEXT (SCALE 1X)
