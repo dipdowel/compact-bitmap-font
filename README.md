@@ -7,3 +7,6 @@ This repository contains related software and the specification of CBF file form
 
 ## TODO:
 - Describe the CBF file format!
+- - - - - - - - - - - - - - - - - -
+
+![cut.png](docs/cut.png)
