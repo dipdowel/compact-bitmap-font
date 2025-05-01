@@ -33,6 +33,23 @@ pub fn u16_vec_to_utf8_char(vec: Vec<u16>) -> char {
     reassembled_char.chars().next().unwrap()
 }
 
+/// Splits a String in half by character count, handling UTF-8 safely
+pub fn split_string_in_half(s: String) -> (String, String) {
+    let mid_char_idx = s.chars().count() / 2;
+
+    // Convert char index to byte index
+    let byte_idx = s
+        .char_indices()
+        .nth(mid_char_idx)
+        .map(|(i, _)| i)
+        .unwrap_or(s.len());
+
+    let (left, right) = s.split_at(byte_idx);
+    (left.to_string(), right.to_string())
+}
+
+
+
 //TODO: ===========================================
 //TODO: add unit tests for the two functions above!
 //TODO: ===========================================

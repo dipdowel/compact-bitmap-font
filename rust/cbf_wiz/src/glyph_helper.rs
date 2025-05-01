@@ -40,7 +40,7 @@ pub fn get_width(
         }
     }
 
-    return result;
+    result
 }
 
 // TODO Unit tests!

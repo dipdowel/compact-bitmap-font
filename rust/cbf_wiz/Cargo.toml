@@ -9,7 +9,9 @@ image = "0.25.1"
 chrono = "0.4.38"
 miniserde = "0.1.39"
 clap = { version = "4.5.4", features = ["derive"]}
-graph1 = { path = "../../../graph1" }
+
+graph1 = { git = "https://github.com/dipdowel/graph1", tag = "0.0.2-alpha" }
+
 
 [profile.release]
 debug = false

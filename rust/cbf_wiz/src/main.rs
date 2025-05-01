@@ -4,8 +4,8 @@ use std::path::PathBuf;
 use std::process;
 
 use clap::Parser;
-use graph1::primitives::primitives::Dimensions2d;
-use image::{EncodableLayout, Pixel};
+use graph1::primitives::plane::Dimensions2d;
+// use image::{EncodableLayout, Pixel};
 
 use crate::cli::CliArguments;
 use crate::font_wiz::{PixelFontMetaWiz, PixelFontWiz};

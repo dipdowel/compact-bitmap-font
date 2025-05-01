@@ -1,4 +1,4 @@
 /target
 /temp
-/cbf-result/cc_red_alert_inet.cbf
-/cbf-result/
+/cbf-result/old/*
+/cbf-result/*
