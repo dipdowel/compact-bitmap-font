@@ -13,3 +13,44 @@ target/
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
 /.idea/*
+/temp/arch/cbf_font_demo.zip
+/temp/arch/cbf_font_demo_bitfix.zip
+/temp/arch/cbf_font_demo_final_fixed.zip
+/temp/arch/cbf_font_demo_fixed.zip
+/temp/arch/cbf_font_demo_render_fixed.zip
+/temp/arch/cc_red_alert_inet_full.png
+/temp/arch/cc_red_alert_inet_full_bw.png
+/temp/arch/cc_red_alert_inet_full_pixel.png
+/temp/arch/fontDemo.js
+/temp/arch/index.html
+/temp/cbf_font_demo_final_bitlogic.zip
+/temp/CC_RA-2.png
+/temp/Characters_in_C_C_Red_Alert__INET__ttf.csv
+/temp/Characters_in_C_C_Red_Alert__LAN__ttf.csv
+/temp/charset-drafting.txt
+/temp/fonts-euro-letters-CC_RA-2.xcf
+/temp/test.html
+/rust/cbf_wiz (copy)/assets/cc_red_alert_inet.json
+/rust/cbf_wiz (copy)/assets/cc_red_alert_inet.png
+/rust/cbf_wiz (copy)/assets/cc_red_alert_lan.json
+/rust/cbf_wiz (copy)/assets/cc_red_alert_lan.png
+/rust/cbf_wiz (copy)/src/utils/io/file.rs
+/rust/cbf_wiz (copy)/src/utils/io/mod.rs
+/rust/cbf_wiz (copy)/src/utils/bit_operations.rs
+/rust/cbf_wiz (copy)/src/utils/log.rs
+/rust/cbf_wiz (copy)/src/utils/mod.rs
+/rust/cbf_wiz (copy)/src/utils/text.rs
+/rust/cbf_wiz (copy)/src/cli.rs
+/rust/cbf_wiz (copy)/src/font_constants.rs
+/rust/cbf_wiz (copy)/src/font_wiz.rs
+/rust/cbf_wiz (copy)/src/glyph_helper.rs
+/rust/cbf_wiz (copy)/src/io_helper.rs
+/rust/cbf_wiz (copy)/src/json.rs
+/rust/cbf_wiz (copy)/src/main.rs
+/rust/cbf_wiz (copy)/src/sampler.rs
+/rust/cbf_wiz (copy)/src/types.rs
+/rust/cbf_wiz (copy)/.gitignore
+/rust/cbf_wiz (copy)/Cargo.lock
+/rust/cbf_wiz (copy)/Cargo.toml
+/rust/cbf_wiz (copy)/cbf_wiz.zip
+/rust/cbf_wiz (copy)/README.md

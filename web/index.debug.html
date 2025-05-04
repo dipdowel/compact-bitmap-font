@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CBF Font Viewer</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: sans-serif;
+      padding: 1em;
+    }
+    select, input {
+      background: #161b22;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 0.5em;
+      margin: 0.5em 0;
+    }
+    canvas {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      margin-top: 1em;
+    }
+  </style>
+</head>
+<body>
+<h1>CBF Font Viewer</h1>
+
+<label>Font:
+  <select id="fontSelect">
+    <option value="cc_red_alert_inet.cbf">cc_red_alert_inet.cbf</option>
+    <option value="cc_red_alert_lan.cbf">cc_red_alert_lan.cbf</option>
+  </select>
+</label><br/>
+
+<label>Scale:
+  <select id="scaleSelect">
+    <option value="1">1x</option>
+    <option value="2" selected>2x</option>
+    <option value="3">3x</option>
+    <option value="4">4x</option>
+  </select>
+</label><br/>
+
+<label>Text:
+  <input type="text" id="inputText" value="HELLO WORLD!" />
+</label><br/>
+
+<pre id="metadata"></pre>
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  let currentFont = null;
+
+  async function loadFont(url) {
+    const res = await fetch(url);
+    const buf = await res.arrayBuffer();
+    const view = new DataView(buf);
+
+    if (view.getUint16(0, true) !== 0xF0CB || view.getUint16(2, true) !== 1) {
+      throw new Error("Invalid file");
+    }
+
+    const header = [];
+    for (let i = 0; i < 14; i++) header.push(view.getUint16(i * 2, true));
+
+    const [
+      , , fontNameSize, authorSize, charOrderSize, charWidthsSize,
+      fontImageWidth, fontImageHeight, spacingProps,
+      , , , year, monthDay
+    ] = header;
+
+    let offset = 28;
+
+    const readStr = (len) => {
+      const str = new TextDecoder().decode(new Uint8Array(buf, offset, len));
+      offset += len;
+      return str;
+    };
+
+    const fontName = readStr(fontNameSize);
+    const author = readStr(authorSize);
+    const charOrderStr = readStr(charOrderSize);
+    const charOrder = Array.from(charOrderStr);
+
+    const widths = new Uint8Array(buf, offset, charWidthsSize);
+    offset += charWidthsSize;
+
+    const kerning = spacingProps & 0xFF;
+    const leading = spacingProps >> 8;
+
+    const rowBytes = Math.ceil(fontImageWidth / 8);
+    const bitmap = new Uint8Array(buf, offset);
+
+    return {
+      fontName, author, charOrder, widths, bitmap,
+      fontImageWidth, fontImageHeight, kerning, leading,
+      year, month: monthDay >> 8, day: monthDay & 0xFF
+    };
+  }
+
+  async function updateFont() {
+    try {
+      const fontFile = document.getElementById("fontSelect").value;
+      currentFont = await loadFont(fontFile);
+      const md = currentFont;
+      document.getElementById("metadata").textContent =
+              `Font: ${md.fontName}
+Author: ${md.author}
+` +
+              `Created: ${md.year}-${String(md.month).padStart(2, '0')}-${String(md.day).padStart(2, '0')}
+` +
+              `Glyphs: ${md.charOrder.length}
+Image: ${md.fontImageWidth}x${md.fontImageHeight}
+` +
+              `Kerning: ${md.kerning}, Leading: ${md.leading}`;
+      updateRender();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load font: " + err.message);
+    }
+  }
+
+  function updateRender() {
+    const scale = parseInt(document.getElementById("scaleSelect").value, 10);
+
+    if (!currentFont) return;
+    canvas.width = 800;
+    canvas.height = 600;
+    ctx.fillStyle = "#0d1117";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const { fontImageWidth, fontImageHeight, bitmap } = currentFont;
+
+    // Try different alignments (with/without byte padding)
+    const tests = [
+      {
+        label: "Flat bitstream (no padding)",
+        render: () => {
+          const totalBits = fontImageWidth * fontImageHeight;
+          for (let i = 0; i < totalBits; i++) {
+            const byte = bitmap[i >> 3];
+            const bit = (byte >> (7 - (i % 8))) & 1;
+            if (bit) {
+              const x = i % fontImageWidth;
+              const y = Math.floor(i / fontImageWidth);
+              ctx.fillRect(x * scale, y * scale, scale, scale);
+            }
+          }
+        },
+        yOffset: 0
+      }
+    ];
+
+    ctx.fillStyle = "#ffffff";
+    for (const { label, render, yOffset } of tests) {
+      ctx.fillStyle = "#c9d1d9";
+      ctx.fillText(label, 10, yOffset + 10);
+      ctx.fillStyle = "#ffffff";
+      ctx.save();
+      ctx.translate(0, yOffset + 20);
+      render();
+      ctx.restore();
+    }
+  }
+ 
+
+  document.getElementById("fontSelect").addEventListener("change", updateFont);
+  document.getElementById("scaleSelect").addEventListener("change", updateRender);
+  document.getElementById("inputText").addEventListener("input", updateRender);
+
+  updateFont();
+</script>
+
+<script>
+  document.title = "TEST " + new Date().toLocaleTimeString();
+</script>
+</body>
+</html>

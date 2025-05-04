@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CBF Font Viewer</title>
+  <link rel="stylesheet" type="text/css" href="styles.css" />
+  <script src="./index.js" defer></script>
+</head>
+<body>
+<h1>CBF Font Viewer</h1>
+
+<label>Font:
+  <select id="fontSelect">
+    <option value="cc_red_alert_inet.cbf">cc_red_alert_inet.cbf</option>
+    <option value="cc_red_alert_lan.cbf">cc_red_alert_lan.cbf</option>
+  </select>
+</label><br/>
+
+<label>Scale:
+  <select id="scaleSelect">
+    <option value="1">1x</option>
+    <option value="2" selected>2x</option>
+    <option value="3">3x</option>
+    <option value="4">4x</option>
+    <option value="5">5x</option>
+    <option value="6">6x</option>
+    <option value="7">7x</option>
+    <option value="8">8x</option>
+  </select>
+</label><br/>
+
+<label>Text:
+  <input type="text" id="inputText" maxlength="80" value="Hi! Welcome to the online CBF font viewer!" />
+</label><br/>
+
+<pre id="metadata"></pre>
+<canvas id="canvas" width="800" height="600"></canvas>
+
+
+
+
+
+
+</body>
+</html>

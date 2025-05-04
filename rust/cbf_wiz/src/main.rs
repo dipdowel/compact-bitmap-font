@@ -162,6 +162,17 @@ fn main() {
     let mut font_body: Vec<u8> = Vec::from(font_name.clone());
     font_body.extend(author_signature.as_bytes());
     font_body.extend(char_order.as_bytes());
+
+
+    println!("⚠️ FINAL charWidths that will be written:");
+    let mut total = 0;
+    for (i, w) in char_widths.iter().enumerate() {
+        println!("  [{}] → {}", i, w);
+        total += *w as u32;
+    }
+    println!("✅ TOTAL WIDTH to be written: {}", total);
+
+
     font_body.extend(char_widths);
     font_body.extend(bit_operations::rgb_to_one_bit_image(
         &font_image_buf_cropped,

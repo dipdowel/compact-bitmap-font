@@ -14,3 +14,14 @@ cd ~/your-work-folder/compact-bitmap-font/rust/cbf_wiz/target/debug
 - - - - - - - - - - - 
 ![cc_red_alert_lan.sample.png](media/cc_red_alert_lan.sample.png)
 - - - - - - - - - - - 
+
+
+
+### The "C&C Red Alert" fonts
+- https://www.dafont.com/c-c-red-alert-inet.font
+- https://www.dafont.com/c-c-red-alert-inet.charmap?f=1
+- https://www.dafont.com/c-c-red-alert-inet.charmap?f=0
+
+### TODO: mention `N3tRunn3r` and his permission for using the fonts here. 
+
+//compact-bitmap-font/rust/cbf_wiz/src/cli.rs
