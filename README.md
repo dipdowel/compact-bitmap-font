@@ -4,6 +4,7 @@ This repository contains related software and the specification of CBF file form
 
 
 - [Font generator in Rust](rust/cbf_wiz/README.md)
+- [Demo: CBF online viewer](https://cbf.codument.com/)
 
 ## TODO:
 - Describe the CBF file format!
