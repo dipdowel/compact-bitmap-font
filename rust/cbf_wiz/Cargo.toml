@@ -10,7 +10,8 @@ chrono = "0.4.38"
 miniserde = "0.1.39"
 clap = { version = "4.5.4", features = ["derive"]}
 
-graph1 = { git = "https://github.com/dipdowel/graph1", tag = "0.0.3-alpha" }
+graph1 = { git = "https://github.com/dipdowel/graph1", tag = "v0.0.4-alpha" }
+#graph1 = { path = "../../../graph1" }
 
 
 [profile.release]

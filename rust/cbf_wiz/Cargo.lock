@@ -414,7 +414,7 @@ dependencies = [
 [[package]]
 name = "graph1"
 version = "0.1.0"
-source = "git+https://github.com/dipdowel/graph1?tag=0.0.3-alpha#e76d8fb65e47bdfc03862e198d3ad9e4925d9f03"
+source = "git+https://github.com/dipdowel/graph1?tag=v0.0.4-alpha#3ca5287eeb5ccafea56bfdb15abe6673d0c85b5e"
 
 [[package]]
 name = "half"

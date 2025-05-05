@@ -1,7 +1,37 @@
+const GREETINGS = [
+    "Hi! Welcome to Cranky Bellhop Fiesta! :-)",
+    "Hey! Explore Cosmic Bubblegum Fiasco! :D",
+    "Yo! Check out Caffeinated Banana Frenzy! ;-)",
+    "Hi! Dive into Cornfield Banana Freefall! <(^.^)>",
+    "Hey! Browse Cobweb Ballet Festival! *_*",
+    "Yo! Step into Caffeine Boost Factory! >_>",
+    "Hi! Enjoy Clumsy Buffalo Foxtrot! <3",
+    "Hey! Discover Cookie Blast Frenzy! ^_^",
+    "Yo! Tour Creepy Basement Funhouse! :-O",
+    "Hi! Explore Coconut Blanket Fortress! :P",
+    "Hey! Dive into Cheetah Ballet Flashmob! :3",
+    "Yo! Enter Croissant Baking Fiesta! (^)o(^)",
+    "Hi! Check out Cartoon Banana Firetruck! XD",
+    "Hey! Browse Cybernetic Burrito Forge! o_O",
+    "Yo! Join Cackling Beagle Fandango! T_T",
+    "Hi! Discover Crystal Broccoli Farm! ;-P",
+    "Hey! Explore Cosmic Blizzard Fervor! >.<",
+    "Yo! Check Chilly Biscuit Fountain! :)",
+    "Hi! Try Circuit Board Fairground! :-|",
+    "Hey! Browse Curvy Beanstalk Fantasy! ;)"
+];
+
+
+
+
 const CANVAS_WIDTH = 1200;
 const CANVAS_HEIGHT = 600;
 
-const marginX = 10, marginY = 10;
+// TODO: Make the margin values configurable via the UI!
+const marginX = 10;
+const marginY = 10;
+
+// TODO: Make kerning and leading configurable via the UI!
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -30,7 +60,7 @@ async function loadFont(url) {
         offset += len;
         return str;
     };
-
+    const byteSize = buf.byteLength;
     const fontName = readStr(fontNameSize);
     const author = readStr(authorSize);
     const charOrderStr = readStr(charOrderSize);
@@ -46,7 +76,7 @@ async function loadFont(url) {
     const bitmap = new Uint8Array(buf, offset);
 
     return {
-        fontName, author, charOrder, widths, bitmap,
+        fontName, author, charOrder, widths, bitmap, byteSize,
         fontImageWidth, fontImageHeight, kerning, leading,
         year, month: monthDay >> 8, day: monthDay & 0xFF
     };
@@ -61,8 +91,9 @@ async function updateFont() {
             `Font: ${md.fontName}<br/>Author: ${md.author}<br />` +
             `Created: ${md.year}-${String(md.month).padStart(2, '0')}-${String(md.day).padStart(2, '0')}<br/>` +
             `Glyphs: ${md.charOrder.length}<br/>` +
-            `Bitmap: ${md.fontImageWidth}x${md.fontImageHeight}<br />` +
-            `Kerning: ${md.kerning}, Leading: ${md.leading}`;
+            `Total pixels: ${md.fontImageWidth*md.fontImageHeight}<br />` +
+            `File size: ${md.byteSize} byte(s)<br />` +
+            `Defaults: kerning: ${md.kerning}, leading: ${md.leading}`;
 
         updateRender();
 
@@ -95,14 +126,17 @@ function updateRender() {
             x,
             w: widths[i]
         };
-        x += widths[i] + 1;
+        x += widths[i];
     }
 
+    // console.log(JSON.stringify(glyphMap));
     let drawX = 0;
     ctx.fillStyle = "#ffffff";
 
     for (const ch of Array.from(text)) {
         const g = glyphMap[ch];
+
+        // FIXME: Use the default character here, don't just skip!!!!!
         if (!g) continue;
 
         // Draw glyph pixels
@@ -130,9 +164,15 @@ function updateRender() {
 
 document.getElementById("fontSelect").addEventListener("change", updateFont);
 document.getElementById("scaleSelect").addEventListener("change", updateRender);
-document.getElementById("inputText").addEventListener("input", updateRender);
+
+const inputText= document.getElementById("inputText");
+inputText.addEventListener("input", updateRender);
+const greetings_idx = Math.floor(Math.random() * GREETINGS.length);
+inputText.value = GREETINGS[greetings_idx];
 
 updateFont();
+
+
 
 
 document.title = "CBF Font Viewer  [ " + new Date().toLocaleTimeString() + " ]";

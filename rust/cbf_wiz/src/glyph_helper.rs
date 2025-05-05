@@ -24,6 +24,8 @@ pub fn get_width(
         verbose,
     );
 
+    let mut marker_positions: Vec<u32> = Vec::new();
+
     for x in 1..total_width {
         is_over_glyph = x > 0 && image_buf[x] == 0x_00_ff_ff_ff;
         if is_over_glyph {
@@ -34,12 +36,16 @@ pub fn get_width(
                 let ch = ordered_font_chars[cur_char_index];
                 print_verbose(&format!("\t{} -> {}", ch, cur_char_width), verbose);
                 result.insert(ch, cur_char_width as u8);
+
             }
+            marker_positions.push(x as u32);
             cur_char_index += 1;
             cur_char_width = 0;
         }
     }
 
+    // println!("marker_positions: {:?}", marker_positions);
+    
     result
 }
 

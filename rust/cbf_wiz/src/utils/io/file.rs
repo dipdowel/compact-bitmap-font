@@ -4,20 +4,19 @@ use core::result::Result::Err;
 use image::io::Reader as ImageReader;
 use image::{DynamicImage, GenericImageView};
 
+// FIXME: simplify. No need to wrap the dimensions in a struct
 pub struct FontImageDim {
     pub original: Dimensions2dWiz,
-    pub cropped: Dimensions2dWiz,
 }
 
 /// Reads an image from a file, converts it to 0RGB format and writes to a provided `buf`.
 /// - On success returns `true`.
 /// - On failure writes an error to `stderr` and returns `false`.
 /// `buf_marked`, an empty buffer, for the original source image with glyph size marks.
-/// `buf_cropped`, an empty buffer, for the image prepared to be packed into the resulting font file.
+
 pub fn read_image(
     path: &str,
     buf_marked: &mut Vec<u32>,
-    buf_cropped: &mut Vec<u32>,
     verbose: bool,
 ) -> Result<FontImageDim, String> {
     let file_open_result = ImageReader::open(path);
@@ -34,7 +33,7 @@ pub fn read_image(
 
     let image_result = reader.decode();
 
-    let mut image = match image_result {
+    let image = match image_result {
         Ok(image) => {
             print_verbose("Image decoded successfully!", verbose);
             image
@@ -51,23 +50,18 @@ pub fn read_image(
         h: image.height(),
     };
 
-    image = image.crop_imm(1, 1, image.width() - 2, image.height() - 1);
-
-    let dimensions_cropped = Dimensions2dWiz {
-        w: image.width(),
-        h: image.height(),
-    };
-
-    convert_to_0rgb(image.clone(), buf_cropped);
-
-    return Ok(FontImageDim {
+    Ok(FontImageDim {
         original: dimensions_original,
-        cropped: dimensions_cropped,
-    });
+     })
 }
 
 /// Converts a `DynamicImage` instance to 0RGB model and writes the result to `buf`
 fn convert_to_0rgb(image: DynamicImage, buf: &mut Vec<u32>) {
+
+    // FIXME: ================================================================================
+    // FIXME:   We most likely want ARGB and not 0RGB, so this function needs to be revised!
+    // FIXME: ================================================================================
+
     // Make sure there's no pre-existing garbage in the buffer
     buf.clear();
 
