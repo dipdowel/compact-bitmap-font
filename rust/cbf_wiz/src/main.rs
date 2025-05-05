@@ -1,17 +1,17 @@
 use std::fs::File;
-use std::io::{Read};
+use std::io::Read;
 use std::path::PathBuf;
 use std::process;
 
 use clap::Parser;
 use graph1::primitives::plane::Dimensions2d;
-// use image::{EncodableLayout, Pixel};
 
 use crate::cli::CliArguments;
 use crate::font_wiz::{PixelFontMetaWiz, PixelFontWiz};
 use crate::sampler::make_sample;
 use crate::types::Dimensions2dWiz;
 use crate::utils::bit_operations;
+use crate::utils::io::density;
 use crate::utils::io::file::read_image;
 use crate::utils::log::print_verbose;
 use crate::utils::text::utf8_char_to_u16_vec;
@@ -52,40 +52,16 @@ fn main() {
     // Read and parse the font source image
     // ====================================
 
-    // This buffer will contain font with the glyph width marks.
+    // Buffer for font with the glyph width marks.
     // It should be used for figuring out the glyph widths.
     let mut font_image_buf: Vec<u32> = Vec::new();
 
-    // This buffer will contain a cropped image with just the font (the size marks removed).
-    // It should be packed into the resulting CBF file.
-    let mut font_image_buf_cropped: Vec<u32> = Vec::new();
-
     print_verbose("Reading the font image", verbose);
-    let image_dimensions = read_image(
-        &font_image_path,
-        &mut font_image_buf,
-        &mut font_image_buf_cropped,
-        verbose,
-    )
-    .unwrap_or_else(|e| {
-        eprintln!("Failed to read the font image or its dimensions. {}\n\t", e);
-        process::exit(1);
-    });
-
-    print_verbose(
-        &format!(
-            "Font source image width: {}, height: {} ",
-            image_dimensions.original.w, image_dimensions.original.h
-        ),
-        verbose,
-    );
-    print_verbose(
-        &format!(
-            "Font image to pack. Width: {}, height: {} ",
-            image_dimensions.cropped.w, image_dimensions.cropped.h
-        ),
-        verbose,
-    );
+    let image_dimensions = read_image(&font_image_path, &mut font_image_buf, verbose)
+        .unwrap_or_else(|e| {
+            eprintln!("Failed to read the font image or its dimensions. {}\n\t", e);
+            process::exit(1);
+        });
 
     let PixelFontWiz {
         char_order,
@@ -105,8 +81,6 @@ fn main() {
 
     let spacing_props: u16 = ((spacing.leading_px as u16) << 8) | (spacing.kerning_px as u16);
     let month_day: u16 = ((date_day as u16) << 8) | (date_month as u16);
-
-    // default_char.
 
     // Get the first character
     let default_char = if let Some(first_char) = default_char.chars().next() {
@@ -129,6 +103,25 @@ fn main() {
         .map(|ch| *char_widths_map.get(&ch).unwrap())
         .collect();
 
+    let (font_image_buf_dense, dense_dimensions) =
+        density::condense(&font_image_buf, &image_dimensions, &char_widths, verbose);
+
+    print_verbose(
+        &format!(
+            "Font source image width: {}, height: {} ",
+            image_dimensions.original.w, image_dimensions.original.h
+        ),
+        verbose,
+    );
+
+    print_verbose(
+        &format!(
+            "Font image to pack (dense). Width: {}, height: {} ",
+            dense_dimensions.w, dense_dimensions.h
+        ),
+        verbose,
+    );
+
     // FILL IN THE HEADER
     // ------------------
     let mut font_header: Vec<u16> = vec![0; 14];
@@ -144,8 +137,8 @@ fn main() {
     font_header[5] = char_widths.len() as u16;
 
     // Font image and font properties
-    font_header[6] = image_dimensions.cropped.w as u16;
-    font_header[7] = image_dimensions.cropped.h as u16;
+    font_header[6] = dense_dimensions.w as u16;
+    font_header[7] = dense_dimensions.h as u16;
     font_header[8] = spacing_props;
 
     // The font's default char (utf8, hence can be up to 4 bytes, hence 2 u16 values needed.
@@ -162,21 +155,8 @@ fn main() {
     let mut font_body: Vec<u8> = Vec::from(font_name.clone());
     font_body.extend(author_signature.as_bytes());
     font_body.extend(char_order.as_bytes());
-
-
-    println!("⚠️ FINAL charWidths that will be written:");
-    let mut total = 0;
-    for (i, w) in char_widths.iter().enumerate() {
-        println!("  [{}] → {}", i, w);
-        total += *w as u32;
-    }
-    println!("✅ TOTAL WIDTH to be written: {}", total);
-
-
     font_body.extend(char_widths);
-    font_body.extend(bit_operations::rgb_to_one_bit_image(
-        &font_image_buf_cropped,
-    ));
+    font_body.extend(bit_operations::rgb_to_one_bit_image(&font_image_buf_dense));
 
     // SAVE THE CBF DATA TO A FILE
     // ----------------------------
@@ -222,10 +202,7 @@ fn main() {
     // TODO: 5. Test that Leading and Kerning are handled correctly
     // TODO:
 
-    let sample_image_size: Dimensions2d = Dimensions2d {
-        w: 1800,
-        h: 768,
-    };
+    let sample_image_size: Dimensions2d = Dimensions2d { w: 1800, h: 768 };
 
     let image_buf = make_sample(cbf_data, sample_text, &sample_image_size);
 

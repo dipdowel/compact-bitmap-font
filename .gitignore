@@ -54,3 +54,8 @@ target/
 /rust/cbf_wiz (copy)/Cargo.toml
 /rust/cbf_wiz (copy)/cbf_wiz.zip
 /rust/cbf_wiz (copy)/README.md
+/web/.idea/.gitignore
+/web/.idea/modules.xml
+/web/.idea/vcs.xml
+/web/.idea/web.iml
+/web/.idea/workspace.xml
