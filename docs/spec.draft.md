@@ -1,20 +1,20 @@
-# Compact Bitmap Font (CBF) Format Specification
+# Compact Bitmap Font (CBF): Format Specification
 
-The **Compact Bitmap Font (CBF)** format is a binary format for storing pixel-based bitmap fonts, designed for minimal memory overhead and simple parsing and rendering. This document provides a technical specification of the CBF format and `.cbf` files.
-
----
+The **Compact Bitmap Font (CBF)** format is a binary format for storing pixel fonts, designed for minimal memory overhead and simple parsing and rendering. This document provides a technical specification of the CBF format and `.cbf` files. Feel free to implement your own generator, parser, and/or renderer based on this specification.
+- [cbf_wiz](../rust/cbf_wiz/README.md) -- a Rust-based CBF font generator, verifier and sample text renderer.
+- [cbf_viewer](https://cbf.codument.com/) -- an online CBF viewer and font generator.
+## Status
+> ⚠️ **NB:** The specification itself is stable, but this document is still being improved. Stay tuned.
 
 ## Overview
 
-CBF files store pixel fonts using a compact header followed by metadata, character information, and 1-bit image data. 
+CBF files store pixel fonts using a compact header followed by metadata, character information, and 1-bit image data.
 
 While the format prioritizes minimal memory overhead, UTF-8 encoding is used for its string fields (e.g., font name, author signature, character order) because:
 
 * **Cross-language compatibility**: UTF-8 is standard across modern platforms.
 * **Efficiency for ASCII**: UTF-8 is 1 byte per ASCII character, which matches plain ASCII.
-* **Support for internationalization**: UTF-8 enables optional Unicode support without changing the format.
-
-Also, there is no need for padding or null terminators as the size of each UTF-8 field in the file is defined in the header.
+* **Support for internationalization**: UTF-8 means Unicode support.
 
 ---
 
@@ -35,7 +35,7 @@ Header consists of 14 `u16` values (little-endian):
 
 | Index | Field Name              | Description                                            |
 | ----- | ----------------------- | ------------------------------------------------------ |
-| 0     | `cbf_magic_number`      | CBF Magic Number, must be `0xCBF0`                     |
+| 0     | `cbf_magic_number`      | CBF Magic Number `0xCBF0` (Compact Bitmap F0nt)        |
 | 1     | `cbf_version`           | Format version, currently `1`                          |
 | 2     | `font_name_size`        | Number of bytes in the font name string (UTF-8)        |
 | 3     | `author_signature_size` | Number of bytes in the author signature string (UTF-8) |
@@ -50,6 +50,7 @@ Header consists of 14 `u16` values (little-endian):
 | 12    | `date_year`             | Date: font creation year (4-digit)                     |
 | 13    | `month_day`             | Date: lower byte: day (u8), upper byte: month (u8)     |
 
+
 ### 2. Font Name
 
 UTF-8 string, length defined by header entry \[2].
@@ -58,9 +59,20 @@ UTF-8 string, length defined by header entry \[2].
 
 UTF-8 string, length defined by header entry \[3].
 
-### 4. Character Order
+### 4. Character Order String
 
-UTF-8 string that defines the sequence of characters represented in the bitmap. Size defined in header \[4].
+A UTF-8 string that defines the order of the glyphs on the font bitmap. Size of the string is defined in the header \[4].
+
+Consider the following character order string + the corresponding font image:
+```text
+ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ 
+```
+ 
+![cc_red_alert_inet.png](cc_red_alert_inet.png)
+
+ 
+> ⚠️ **NB:** The actual bitmap image in a CBF file does not have 1px margins between the glyphs to minimize the file size. The margins were added to the image above for better visibility.
+
 
 #### Purpose and Benefits
 
@@ -70,7 +82,7 @@ UTF-8 string that defines the sequence of characters represented in the bitmap. 
 
 ### 5. Character Widths
 
-Array of `u8`, each representing the width (in pixels) of the corresponding character in `char_order`. Length = header \[5]. This array **must have the same number of elements as the number of characters in `char_order`**, and the order of widths must exactly match the order of characters. That is, the first width corresponds to the first character, the second width to the second character, and so on. A mismatch in count or order should be treated as an invalid file.
+Array of `u8`, each representing the width (in pixels) of each glyph. Length is specified by `char_widths_size` in the header \[5]. This array must have **the same length as the number of characters in the Character Order String**, and the order of the widths must exactly match the order of characters in the string and on the image. That is, the first width corresponds to the first character, the second width to the second character, and so on. A mismatch in count or order should be treated as an invalid file.
 
 #### Visual Mapping Diagram
 
@@ -85,57 +97,33 @@ char_widths:    [ 5 ,  3 ,  4 ,  6 ]
 ```
 
 ### 6. Font Bitmap Data
-
-1-bit-per-pixel packed bitmap. The image arranges all glyphs horizontally, in the order specified by `char_order`. The width of each glyph is defined in the `char_widths` array.
+The bitmap is represented as a 1-bit-per-pixel bit-array. The image arranges all glyphs horizontally, according to the Character Order String. The width of each glyph is defined in the Character Widths array.
 
 Each bit represents a single pixel:
 - **1** → white pixel (on)
 - **0** → black pixel (off)
 
-Bits are packed in row-major order, meaning pixels are serialized from left to right across each row, and rows are stored from top to bottom. Rows are byte-aligned; padding may be required at the end of each row to align to the next byte boundary if image width is not a multiple of 8.
-
-#### Example
-A row with 10 pixels: `1010011101` would be stored as two bytes: `[0b10100111, 0b01000000]`.
 
 #### Glyph Positioning
 To locate the glyph for a given character:
 - Look up its index in `char_order`.
-- Sum the widths (plus kerning) of all preceding characters to compute its x-offset.
+- Sum the widths of all the preceding glyph to compute the x-offset.
 
-Formula (in pixels):
 ```text
-x_offset = Σ (width_i + kerning) for all characters before the target character
-````
-
-representing the font's visual appearance. The image arranges all glyphs horizontally, in the order specified by `char_order`. The width of each glyph is defined in the `char_widths` array.
-
-Each bit represents a single pixel:
-
-* **1** → white pixel (on)
-* **0** → black pixel (off)
-
-Bits are packed in row-major order. Rows are byte-aligned; padding may be required at the end of each row to align to the next byte boundary if image width is not a multiple of 8. of the glyphs arranged horizontally, representing the font source image. Characters are stored in the order defined by `char_order`. White (1) = pixel on, Black (0) = pixel off.
-
----
-
-## Rendering Semantics
-
+x_offset = Σ width_i for all characters before the target character
+```
 
 ---
 
 ## The Default Character
 
-The default character is stored as two `u16` words (header \[9] and \[10]) representing a 4-byte UTF-8 character.
+The default character is stored as two `u16` words (in the header in \[9] and \[10]) representing a 4-byte UTF-8 character.
 
 ### Purpose of the Default Character
 
-The default character acts as a fallback glyph rendered when a requested character is not found in the font's character set:
-* **Ensures robustness**: Prevents rendering failures when encountering unknown characters.
+The default character acts as a fallback when a requested character is not found in the font's Character Order String.
+* **Ensures robustness**: Prevents rendering failures when encountering unknown characters, no extra error handling needed.
 * **Customizable appearance**: Designers may use a question mark, box, or other symbol.
-* **Simplifies rendering logic**: Always returns a glyph, reducing error handling.
-* **Essential for dynamic or external text**: E.g., user input, chat messages, or translations.
-* **Ensures total mapping**: During runtime, every character has a guaranteed fallback glyph, avoiding lookup errors in the renderer.
-
 
 ---
 
@@ -143,17 +131,18 @@ The default character acts as a fallback glyph rendered when a requested charact
 
 Use this checklist to verify that a `.cbf` file is valid:
 
-* [ ] Header\[0] == 0xCBF0 (magic number)
-* [ ] Header\[1] == 1 (a format version that you expect and know how to parse)
-
+1. Header\[0] == 0xCBF0 (magic number)
+2. Header\[1] == 1 (a format version that you expect and know how to parse)
+3. Sum of widths of all the glyphs equals the width of the font bitmap in the header \[6]:
+    - I.e. `Σ char_widths[i] === font_image_width [6]`
 
 ---
 
 ## Notes
 
-* Bitmaps are compact and byte-aligned but not compressed.
-* The format is stable and not currently designed for extensibility; implementers should reject files with unknown header versions.
-* Always validate the magic number and version before parsing.
+* As of version 1, bitmap in the font is not compressed.
+* Implementers should reject files with an unknown version in the header.
+* Always validate the magic number and the  and version before parsing.
 * The font metadata section (name, author, version, creation date) can be used in font selection UIs and diagnostics/debugging.
 
 ---
