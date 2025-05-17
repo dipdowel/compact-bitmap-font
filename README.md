@@ -74,9 +74,7 @@ Consider the following character order string + the corresponding font image:
  ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ 
 ```
 
-![cc_red_alert_inet.png](cc_red_alert_inet.png)
-
-
+![cc_red_alert_inet.png](docs/cc_red_alert_inet.png)
 > ⚠️ **NB:** The actual bitmap image in a CBF file does not have 1px margins between the glyphs to minimize the file size. The margins were added to the image above for better visibility.
 
 
