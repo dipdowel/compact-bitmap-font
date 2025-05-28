@@ -1,18 +1,127 @@
-# Compact Bitmap Font (CBF): Format Specification
+# Compact Bitmap Font (CBF): A Designer's Guide
 
-The **Compact Bitmap Font (CBF)** format is a binary format for storing pixel fonts, designed for minimal memory overhead and simple parsing and rendering. This document provides a technical specification of the CBF format and `.cbf` files. Feel free to implement your own generator, parser, and/or renderer based on this specification.
-- [cbf_wiz](rust/cbf_wiz/README.md) -- a Rust-based CBF font generator, verifier and sample text renderer.
+The **Compact Bitmap Font (CBF)** format is a compact, memory-efficient format for bitmap (pixel) fonts. It is designed for embedded systems, retro-style games, terminals, and anywhere performance and simplicity matter.
+
+This guide helps designers prepare the visual and metadata assets needed to generate a `.cbf` font file.
+
+---
+
+## 🧹 Required Assets
+
+To compile a CBF font, you need:
+
+1. **A PNG image**: Your pixel font glyphs arranged in a single row.
+2. **A JSON config**: Metadata and layout settings for your font.
+
+---
+
+## 🎨 PNG Source Image Specifications
+
+### ✅ Format and Layout
+
+| Requirement        | Description                                                                                                                                             |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| File format        | PNG, **without transparency**                                                                                                                           |
+| Color mode         | RGB                                                                                                                                                     |
+| Background color   | Solid white (`#FFFFFF` / `RGB(255, 255, 255)`)                                                                                                          |
+| Glyph layout       | All glyphs must be arranged **horizontally in a single row**, in the order defined in the JSON's `char_order`                                           |
+| Glyph color        | Solid black (`#000000` / `RGB(0, 0, 0)`)                                                                                                                |
+| Top padding        | Exactly **1px padding** above the [ascenders](https://en.wikipedia.org/wiki/Ascender_%28typography%29) (this vertical space houses glyph separators)    |
+| Bottom padding     | None — [descenders](https://en.wikipedia.org/wiki/Descender) of glyphs must touch the bottom edge of the image                                          |
+| Left/Right padding | Exactly **1px margin** on each side (background color)                                                                                                  |
+| Separation markers | **1-pixel colored dots** on the line above [ascenders](https://en.wikipedia.org/wiki/Ascender_%28typography%29), horizontally -- between the glyphs     |
+| Start/end  markers | The pixel in the top-left corner and the pixel in top-right corner of the image must contain the glyph separator.                                       |
+| Horizontal spacing | **1px wide white space** (background color) to separate glyphs from each other                                                                          |
+| The 'space' glyph  | The charset **must** include space character, so there should be a corresponding glyph in the PNG.                                                      |
+
+
+
+
+#### ⚠️ Important Notes
+
+* Characters are separated by a **colored pixel** (separator) **above the glyph**, not by vertical lines.
+* 1px horizontal white space (background color) exists between glyphs.
+* The font must be monochrome: black-on-white only.
+* The image should contain **no extra padding or alignment guides** outside of what’s described.
+
+---
+
+
+
+
+
+
+
+
+
+## Overview
+
+In order to compile a font you need 2 assets: 
+1. A PNG source image with your font design.
+2. A JSON font configuration file.
+
+The generator for compiling a font is available as:
+- An online tool: https://coduments.com/to-be-announced
+- A CLI tool:
+    - Download a binary: https://coduments.com/to-be-announced
+    - Build from source code: https://github.com/dipdowel/compact-bitmap-font/tree/develop/rust/cbf_wiz
+
+
+## Assets preparation
+ 
+### Source font image (PNG)
+
+1. The source image of a pixel font should contain glyphs design of your font.
+2. The image should be a PNG file, without transparency.
+3. There should be 1 pixel spacing between the glyphs horizontally, i.e. there should be a vertical column `1px` wide, separating characters from each other.
+4. On the top and bottom there should be no vertical spacing between the most protruding extremities of the characters and the edge of the image
+5. On the left and right, there must be 1 column left blank (i.e. 1px margin on left and right) with the char separator marker. See `Glyph separation markers (separators).` below.
+
+
+
+![sample source PNG](./media/source-image-sample.png)
+NB: this image was scaled up for illustration purposes! 
+
+
+
+
+Please see [cbf_wiz](./media/source-image-sample.png)
+
+### Background color
+The image background must be a 100% white color in RGB model, for example:
+- Hex value `#ffffff`
+- RGB value: `255, 255, 255`
+
+### Font glyph color
+The color used for depicting the font glyphs must be a 100% black in RGB model, for example:
+- Hex value `#000000`
+- RGB value: `0, 0, 0`
+
+### Glyph separation markers (separators).
+- The image should contain separation markers of 1 pixel. These markers signal the start and end of each glyph/character. 
+- Color of the separators must be any RGB color other than 100% black and 100% white. For example, cyan could be a good option.
+
+
+
+
+
+
+
+
+
+
+### Font configuration and metadata (JSON)
+
+The main asset for compiling 
+
+
+
+- [cbf_wiz](../rust/cbf_wiz/README.md) -- a Rust-based CBF font generator, verifier and sample text renderer.
 - [cbf_viewer](https://cbf.codument.com/) -- an online CBF viewer and font generator.
-- [README.md](web/README.md) -- a javascript-based CBF font parser, renderer, and viewer.
-
-
-![cut-sample.png    ](media/cut-sample.png)
-
-
 ## Status
 > ⚠️ **NB:** The specification itself is stable, but this document is still being improved. Stay tuned.
 
-## Overview
+
 
 CBF files store pixel fonts using a compact header followed by metadata, character information, and 1-bit image data.
 
@@ -22,7 +131,7 @@ While the format prioritizes minimal memory overhead, UTF-8 encoding is used for
 * **Efficiency for ASCII**: UTF-8 is 1 byte per ASCII character, which matches plain ASCII.
 * **Support for internationalization**: UTF-8 means Unicode support.
 
-
+---
 
 ## File Structure
 
@@ -73,8 +182,10 @@ Consider the following character order string + the corresponding font image:
 ```text
  ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ 
 ```
+ 
+![cc_red_alert_inet.png](cc_red_alert_inet.png)
 
-![cc_red_alert_inet.png](media/cc_red_alert_inet.png)
+ 
 > ⚠️ **NB:** The actual bitmap image in a CBF file does not have 1px margins between the glyphs to minimize the file size. The margins were added to the image above for better visibility.
 
 
@@ -117,7 +228,7 @@ To locate the glyph for a given character:
 x_offset = Σ width_i for all characters before the target character
 ```
 
-
+---
 
 ## The Default Character
 
@@ -129,7 +240,7 @@ The default character acts as a fallback when a requested character is not found
 * **Ensures robustness**: Prevents rendering failures when encountering unknown characters, no extra error handling needed.
 * **Customizable appearance**: Designers may use a question mark, box, or other symbol.
 
-
+---
 
 ## Validation Checklist
 
@@ -140,7 +251,7 @@ Use this checklist to verify that a `.cbf` file is valid:
 3. Sum of widths of all the glyphs equals the width of the font bitmap in the header \[6]:
     - I.e. `Σ char_widths[i] === font_image_width [6]`
 
-
+---
 
 ## Notes
 
@@ -149,8 +260,10 @@ Use this checklist to verify that a `.cbf` file is valid:
 * Always validate the magic number and the  and version before parsing.
 * The font metadata section (name, author, version, creation date) can be used in font selection UIs and diagnostics/debugging.
 
+---
 
 ## License
 
-See [LICENSE](LICENSE)
+Specification derived from the open-source Graph1 project.
 
+---

@@ -59,3 +59,8 @@ target/
 /web/.idea/vcs.xml
 /web/.idea/web.iml
 /web/.idea/workspace.xml
+/rust/.idea/modules.xml
+/rust/.idea/rust.iml
+/rust/.idea/vcs.xml
+/rust/.idea/workspace.xml
+/temp/
