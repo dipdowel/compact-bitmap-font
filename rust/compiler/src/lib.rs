@@ -6,7 +6,7 @@ mod types;
 
 mod utils {
     pub(crate) mod bit_operations;
-    pub(crate) mod convert_to_0rgb;
+
     pub(crate) mod density;
     pub(crate) mod io;
     pub(crate) mod make_cbf_file_data;
@@ -26,13 +26,12 @@ use crate::types::{CompilationResult, Dimensions2d, PixelFont, PixelFontMeta};
 use miniserde::{Error, json};
 
 use crate::error::CompileFontError;
-use crate::utils::convert_to_0rgb::convert_to_0rgb;
+use crate::sampler::make_sample;
+use crate::utils::make_cbf_file_data::make_cbf_file_data;
 use crate::utils::text::utf8_char_to_u16_vec;
 use crate::utils::{bit_operations, density};
 use image::{DynamicImage, ImageError};
 use std::io::Cursor;
-use crate::sampler::make_sample;
-use crate::utils::make_cbf_file_data::make_cbf_file_data;
 
 pub fn compile_font(
     font_image_buf: &[u8],
@@ -52,10 +51,13 @@ pub fn compile_font(
 
     vprintln!(verbose, "font_info decoded from JSON:\n{:#?}", font_info);
 
-    let buf_marked: &mut Vec<u32> = &mut Vec::new();
-
-    // FIXME: This step is questionable. Maybe we can skip it altogether?
-    convert_to_0rgb(font_image.clone(), buf_marked);
+    // Convert the image to `Vec<u32>`, where `u32` is a pixel in `RGBA`.
+    let buf_marked = font_image
+        .to_rgba8()
+        .into_raw()
+        .chunks_exact(4)
+        .map(|px| u32::from_le_bytes([px[0], px[1], px[2], px[3]]))
+        .collect();
 
     let PixelFont {
         char_order,
@@ -86,12 +88,8 @@ pub fn compile_font(
 
     let default_char_parts = utf8_char_to_u16_vec(default_char);
 
-    let char_widths_map = glyph_helper::get_width(
-        buf_marked,
-        &src_img_dimensions,
-        &char_order,
-        verbose,
-    );
+    let char_widths_map =
+        glyph_helper::get_width(&buf_marked, &src_img_dimensions, &char_order, verbose);
 
     // vprintln!(verbose, "char_widths_map: {:#?}", char_widths_map);
 
@@ -100,12 +98,8 @@ pub fn compile_font(
         .map(|ch| *char_widths_map.get(&ch).unwrap())
         .collect();
 
-    let (font_image_buf_dense, dense_dimensions) = density::condense(
-        &buf_marked,
-        &src_img_dimensions,
-        &char_widths,
-        verbose,
-    );
+    let (font_image_buf_dense, dense_dimensions) =
+        density::condense(&buf_marked, &src_img_dimensions, &char_widths, verbose);
 
     vprintln!(
         verbose,
@@ -181,7 +175,7 @@ pub fn compile_font(
             .join(", ")
     );
 
-    let cbf_blob =  make_cbf_file_data(&font_header, &font_body);
+    let cbf_blob = make_cbf_file_data(&font_header, &font_body);
 
     // Prepare the file name for the CBF file
     let file_name = font_name.replace(" ", "_");
@@ -189,23 +183,28 @@ pub fn compile_font(
 
     let sample_image_size: Dimensions2d = Dimensions2d { w: 1800, h: 768 };
 
-    let font_sample_png_data = make_sample(&cbf_blob, &sample_text, sample_image_size.w, sample_image_size.h);
+    let font_sample_png_data = make_sample(
+        &cbf_blob,
+        &sample_text,
+        sample_image_size.w,
+        sample_image_size.h,
+    );
 
     Ok(CompilationResult {
         file_name: file_name_cbf,
         src_img_dimensions,
-        dst_img_dimensions:dense_dimensions,
+        dst_img_dimensions: dense_dimensions,
         cbf_binary_file_data: cbf_blob,
         font_sample_png_data,
-        font_sample_png_dimensions: sample_image_size
+        font_sample_png_dimensions: sample_image_size,
     })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs;
     use crate::utils::io::write_png_to_file;
+    use std::fs;
 
     #[test]
     fn test_compile_font() {
@@ -222,18 +221,16 @@ mod tests {
         // println!("Image dimensions: {}x{}", img.width(), img.height());
         // println!("Compiled font data: {:?}", compiled);
 
-        assert!(
-            compiled.src_img_dimensions.w == 520
-                && compiled.src_img_dimensions.h == 10
-        );
+        assert!(compiled.src_img_dimensions.w == 520 && compiled.src_img_dimensions.h == 10);
 
-        assert!(
-            compiled.dst_img_dimensions.w == 424
-                && compiled.dst_img_dimensions.h == 9
-        );
+        assert!(compiled.dst_img_dimensions.w == 424 && compiled.dst_img_dimensions.h == 9);
 
-        write_png_to_file(&".", &compiled.file_name, &compiled.font_sample_png_data, &compiled.font_sample_png_dimensions)
-            .expect("Failed to write sample PNG to file");;
-
+        write_png_to_file(
+            &".",
+            &compiled.file_name,
+            &compiled.font_sample_png_data,
+            &compiled.font_sample_png_dimensions,
+        )
+        .expect("Failed to write sample PNG to file");
     }
 }

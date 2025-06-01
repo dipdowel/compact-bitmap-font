@@ -21,7 +21,7 @@ pub fn get_width(
     let mut marker_positions: Vec<u32> = Vec::new();
 
     for x in 1..total_width {
-        is_over_glyph = x > 0 && image_buf[x] == 0x_00_ff_ff_ff;
+        is_over_glyph = x > 0 && image_buf[x] == 0x_ff_ff_ff_ff;
         if is_over_glyph {
             cur_char_width += 1
         } else {
