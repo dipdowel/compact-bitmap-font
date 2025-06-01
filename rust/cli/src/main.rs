@@ -57,6 +57,7 @@ fn main() {
     let mut font_image_buf: Vec<u32> = Vec::new();
 
     print_verbose("Reading the font image", verbose);
+    
     let image_dimensions = read_image(&font_image_path, &mut font_image_buf, verbose)
         .unwrap_or_else(|e| {
             eprintln!("Failed to read the font image or its dimensions. {}\n\t", e);

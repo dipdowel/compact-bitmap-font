@@ -1,0 +1,8 @@
+[package]
+name = "backend"
+version = "0.1.0"
+edition = "2024"
+
+
+[dependencies]
+graph1 = { git = "https://github.com/dipdowel/graph1", tag = "v0.0.4-alpha" }

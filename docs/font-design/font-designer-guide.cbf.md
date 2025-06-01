@@ -106,11 +106,15 @@ The color used for depicting the font glyphs must be a 100% black in RGB model, 
 
 
 
-
-
-
-
 ### Font configuration and metadata (JSON)
+
+
+### The default character
+The default character acts as a fallback when a specified character cannot be found in the font's `Character Order String`.
+The default character **must** be present in the `Character Order String`! If it is not present, the font generator will refuse to compile the font.
+
+
+-------------------------------------------------
 
 The main asset for compiling 
 

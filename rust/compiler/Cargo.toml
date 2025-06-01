@@ -1,0 +1,9 @@
+[package]
+name = "compiler"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+miniserde = "0.1.39"
+image = "0.25.1"
+graph1 = { git = "https://github.com/dipdowel/graph1", tag = "v0.0.4-alpha" }
