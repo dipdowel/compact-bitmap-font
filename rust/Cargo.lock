@@ -249,8 +249,8 @@ name = "cli"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "compiler",
  "graph1",
- "image",
  "miniserde",
 ]
 

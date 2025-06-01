@@ -4,11 +4,11 @@ mod font_constants;
 
 mod types;
 
-mod utils {
+pub mod utils {
     pub(crate) mod bit_operations;
 
     pub(crate) mod density;
-    pub(crate) mod io;
+    pub mod io;
     pub(crate) mod make_cbf_file_data;
     pub(crate) mod text;
 }
@@ -18,7 +18,8 @@ pub(crate) mod sampler;
 
 // == [ MACROS ] ===================================================================================
 #[macro_use]
-pub(crate) mod macros;
+pub mod macros;
+
 
 // == [ IMPORTS ] ==================================================================================
 
