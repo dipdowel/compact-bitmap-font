@@ -23,14 +23,13 @@ pub(crate) mod macros;
 // == [ IMPORTS ] ==================================================================================
 
 use crate::types::{CompilationResult, Dimensions2d, PixelFont, PixelFontMeta};
-use miniserde::{Error, json};
+use miniserde::json;
 
 use crate::error::CompileFontError;
 use crate::sampler::make_sample;
 use crate::utils::make_cbf_file_data::make_cbf_file_data;
 use crate::utils::text::utf8_char_to_u16_vec;
 use crate::utils::{bit_operations, density};
-use image::{DynamicImage, ImageError};
 use std::io::Cursor;
 
 pub fn compile_font(
@@ -78,7 +77,6 @@ pub fn compile_font(
     let spacing_props: u16 = ((spacing.leading_px as u16) << 8) | (spacing.kerning_px as u16);
     let month_day: u16 = ((date_day as u16) << 8) | (date_month as u16);
 
-    // TODO: figure out what the hell we even do here...
     // Get the first character
     let default_char = if let Some(first_char) = default_char.chars().next() {
         first_char
