@@ -1,9 +1,10 @@
-use std::path::PathBuf;
-use std::{fs, process};
-use clap::Parser;
 use crate::cli::CliArguments;
+use clap::Parser;
 use compiler::{compile_font, vprintln};
-use compiler::utils::io::write_png_to_file;
+use std::fs::File;
+use std::io::Write;
+use std::path::{Path, PathBuf};
+use std::{fs, process};
 mod cli;
 mod io_helper;
 
@@ -63,14 +64,17 @@ fn main() {
 
     // SAVE THE SAMPLE PNG TO FILE
     // ----------------------------
-    write_png_to_file(
-        &output_dir,
-        &sample_png_filename,
-        &compiled.font_sample_png_data,
-        &compiled.font_sample_png_dimensions,
-    )
-    .unwrap_or_else(|e| {
-        eprintln!("Failed to write the sample PNG to:  {output_dir}.\n{}", e);
-        process::exit(1);
+
+    // Save the PNG as a PNG file
+    let file_name_png = format!("{}.sample.png", compiled.file_name);
+    let png_path = Path::new(&output_dir).join(file_name_png);
+
+    let mut file = File::create(png_path).unwrap_or_else(|e| {
+        panic!("Failed to create the font sample PNG file [1]: {}", e);
     });
+
+    file.write_all(&compiled.font_sample_png_data)
+        .unwrap_or_else(|e| {
+            panic!("Failed to create the font sample PNG file [2]: {}", e);
+        });
 }

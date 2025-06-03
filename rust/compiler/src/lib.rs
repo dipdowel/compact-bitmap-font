@@ -8,8 +8,9 @@ pub mod utils {
     pub(crate) mod bit_operations;
 
     pub(crate) mod density;
-    pub mod io;
+    
     pub(crate) mod make_cbf_file_data;
+    pub(crate) mod make_png;
     pub(crate) mod text;
 }
 
@@ -20,7 +21,6 @@ pub(crate) mod sampler;
 #[macro_use]
 pub mod macros;
 
-
 // == [ IMPORTS ] ==================================================================================
 
 use crate::types::{CompilationResult, Dimensions2d, PixelFont, PixelFontMeta};
@@ -29,10 +29,20 @@ use miniserde::json;
 use crate::error::CompileFontError;
 use crate::sampler::make_sample;
 use crate::utils::make_cbf_file_data::make_cbf_file_data;
+use crate::utils::make_png::pixels_to_png;
 use crate::utils::text::utf8_char_to_u16_vec;
 use crate::utils::{bit_operations, density};
 use std::io::Cursor;
+use std::path::Path;
 
+/// Compiles a CBF-font from a PNG image and a JSON configuration string.
+/// # Arguments:
+/// * `font_image_buf`: A byte slice containing the PNG image data of the font.
+/// * `font_info_json`: A JSON string containing the font metadata and configuration.
+/// * `verbose`: A boolean flag to control the verbosity of the output.
+/// # Returns:
+/// * `Result<CompilationResult, CompileFontError>`: On success, returns a `CompilationResult` containing the compiled font data and metadata. On failure, returns a `CompileFontError`.
+///
 pub fn compile_font(
     font_image_buf: &[u8],
     font_info_json: String,
@@ -66,6 +76,7 @@ pub fn compile_font(
         sample_text,
         meta,
     } = font_info;
+
     let PixelFontMeta {
         font_name,
         author_signature,
@@ -78,7 +89,7 @@ pub fn compile_font(
     let spacing_props: u16 = ((spacing.leading_px as u16) << 8) | (spacing.kerning_px as u16);
     let month_day: u16 = ((date_day as u16) << 8) | (date_month as u16);
 
-    // Get the first character
+    // Get the first (and the only) character that will be used as the default one.
     let default_char = if let Some(first_char) = default_char.chars().next() {
         first_char
     } else {
@@ -182,28 +193,34 @@ pub fn compile_font(
 
     let sample_image_size: Dimensions2d = Dimensions2d { w: 1800, h: 768 };
 
-    let font_sample_png_data = make_sample(
+    let font_sample_raw_data = make_sample(
         &cbf_blob,
         &sample_text,
         sample_image_size.w,
         sample_image_size.h,
     );
 
+    let font_sample_png_data = pixels_to_png(&font_sample_raw_data, &sample_image_size)?;
+
     Ok(CompilationResult {
         file_name: file_name_cbf,
         src_img_dimensions,
         dst_img_dimensions: dense_dimensions,
         cbf_binary_file_data: cbf_blob,
+        font_sample_raw_data,
         font_sample_png_data,
-        font_sample_png_dimensions: sample_image_size,
+        sample_image_size,
     })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::utils::io::write_png_to_file;
+    // use crate::utils::io::write_png_to_file;
     use std::fs;
+    use std::fs::File;
+    use std::io::Write;
+    use std::path::Path;
 
     #[test]
     fn test_compile_font() {
@@ -217,19 +234,21 @@ mod tests {
         let compiled =
             compile_font(&font_png_data, font_json_data, true).expect("Failed to compile font");
 
-        // println!("Image dimensions: {}x{}", img.width(), img.height());
-        // println!("Compiled font data: {:?}", compiled);
-
         assert!(compiled.src_img_dimensions.w == 520 && compiled.src_img_dimensions.h == 10);
 
         assert!(compiled.dst_img_dimensions.w == 424 && compiled.dst_img_dimensions.h == 9);
 
-        write_png_to_file(
-            &".",
-            &compiled.file_name,
-            &compiled.font_sample_png_data,
-            &compiled.font_sample_png_dimensions,
-        )
-        .expect("Failed to write sample PNG to file");
+        // Save the PNG as a PNG file
+        let file_name_png = format!("{}.sample.png", compiled.file_name);
+        let png_path = Path::new(".").join(file_name_png);
+
+        let mut file = File::create(png_path).unwrap_or_else(|e| {
+            panic!("Failed to create PNG file: {}", e);
+        });
+
+        file.write_all(&compiled.font_sample_png_data)
+            .unwrap_or_else(|e| {
+                panic!("Failed to create PNG file: {}", e);
+            })
     }
 }

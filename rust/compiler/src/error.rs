@@ -8,6 +8,7 @@ use std::fmt;
 pub enum CompileFontError {
     Image(ImageError),
     Json(miniserde::Error),
+    PNG(String),
     // You can add more as needed
 }
 
@@ -16,6 +17,7 @@ impl fmt::Display for CompileFontError {
         match self {
             CompileFontError::Image(e) => write!(f, "Font image error: {}", e),
             CompileFontError::Json(e) => write!(f, "JSON error: {}", e),
+            CompileFontError::PNG(e) => write!(f, "Font Sample PNG generation error: {}", e),
         }
     }
 }

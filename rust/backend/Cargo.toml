@@ -5,4 +5,10 @@ edition = "2024"
 
 
 [dependencies]
-graph1 = { git = "https://github.com/dipdowel/graph1", tag = "v0.0.4-alpha" }
+axum = "0.8.4"
+axum-extra = { version = "0.10.1", features = ["multipart"] }
+tokio = { version = "1.45.1", features = ["full"] }
+tower = "0.5.2"
+zip = "4.0.0"
+mime = "0.3.17"
+compiler = { path = "../compiler" }

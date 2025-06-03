@@ -14,8 +14,8 @@ Generates CBF files based on a font image and a JSON description.
 
 ```sh
 cd ~/your-work-folder/compact-bitmap-font/rust/target/debug 
-./cli -i ../../assets/cc_red_alert_lan.png -j ../../assets/cc_red_alert_lan.json -o ~/temp/cbf -v
-./cli -i ../../assets/cc_red_alert_inet.png -j ../../assets/cc_red_alert_inet.json -o ~/temp/cbf -v
+./cli -i ../../assets/cc_red_alert_lan.png -j ../../assets/cc_red_alert_lan.json -o ~/cbf -v
+./cli -i ../../assets/cc_red_alert_inet.png -j ../../assets/cc_red_alert_inet.json -o ~/cbf -v
 ```
 
 ## Expected output

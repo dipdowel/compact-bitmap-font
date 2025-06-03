@@ -23,7 +23,7 @@ pub fn write_cbf_to_file(
     let mut file = File::create(file_path)?;
 
     for num in font_data {
-        file.write_all(&num.to_le_bytes())?; // Using little endian encoding
+        file.write_all(&num.to_le_bytes())?; 
     }
     Ok(())
 }
