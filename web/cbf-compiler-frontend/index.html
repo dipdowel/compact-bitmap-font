@@ -1,0 +1,113 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBF compiler and viewer</title>
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="stylesheet" href="markdown.css" />
+
+
+</head>
+<body>
+<div id="app">
+  <h1 style="border: none">Online CBF font compiler</h1>
+  <div class="info">CBF = Compact Bitmap Font. Such fonts are tiny, often less than 1 kilobyte in size!</div>
+  <nav class="tab-bar">
+    <button data-tab="font-compiler-section">Font Compiler</button>
+    <button data-tab="font-viewer-section">Font Viewer</button>
+    <button data-tab="docs-and-guides-section">Docs & Guides</button>
+  </nav>
+
+
+<!-- ===[ COMPILER SECTION ]======================================================================================= -->
+
+  <section id="font-compiler-section" class="tab-section active">
+<!--  <section id="font-compiler-section" class="tab-section">-->
+    <div class="content">
+      <h1>Compiler: upload your font assets here </h1>
+
+      Please see <span class="code-like">Docs & Guides</span> for
+      details on the source files for generating your font.
+
+      <form id="font-assets-form">
+
+        <div class="info">
+        <label for="png_input">Font source image with glyphs (a PNG file)</label>
+        <input type="file" id="png_input" accept="image/png" required />
+        </div>
+      <div class="info">
+        <label for="json_input">Font configuration (a JSON file)</label>
+        <input type="file" id="json_input" accept="application/json" required />
+      </div>
+      <div class="form-actions">
+        <button type="submit">Upload</button>
+      </div>
+    </form>
+    <div id="formMessage" class="info" style="display: none;"></div>
+
+      <br />
+      <a href="/media/sample-font-assets.zip" >Download sample font assets</a> to try them with the compiler!
+    </div>
+  </section>
+
+  <!-- ===[ FONT VIEWER SECTION ]======================================================================================= -->
+
+  <section id="font-viewer-section" class="tab-section">
+<!--  <section id="font-viewer-section" class="tab-section active">-->
+
+    <div class="content">
+
+      <h1>Viewer: upload and view your CBF font here</h1>
+
+      Please see <span class="code-like">Docs & Guides</span> for
+      details on the font file.
+
+      <form>
+      <div class="info">
+        <label for="fontUpload">Select a <span class="code-like">.cbf</span> file to upload:
+          <input type="file" id="fontUpload" accept=".cbf" />
+        </label>
+      </div>
+      </form>
+
+
+
+      <label>Scale:
+        <select id="scaleSelect">
+          <option value="1">1x</option>
+          <option value="2" selected>2x</option>
+          <option value="3">3x</option>
+          <option value="4">4x</option>
+          <option value="5">5x</option>
+          <option value="6">6x</option>
+          <option value="7">7x</option>
+          <option value="8">8x</option>
+        </select>
+      </label><br/>
+
+      <label>Edit me:
+        <input type="text" id="inputText" maxlength="80" value="Hi! Welcome to the online CBF font viewer!" />
+      </label><br/>
+
+      <pre id="metadata"></pre>
+      <canvas id="canvas" width="800" height="600"></canvas>
+
+
+    </div>
+  </section>
+
+  <!-- ===[ DOCS & GUIDES SECTION ]=================================================================================== -->
+
+  <section id="docs-and-guides-section" class="tab-section">
+<!--  <section id="docs-and-guides-section" class="tab-section active">-->
+    <div class="content">
+      <div id="markdown-container"></div>
+    </div>
+
+  </section>
+</div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

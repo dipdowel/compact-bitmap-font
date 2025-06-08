@@ -1,0 +1,21 @@
+[package]
+name = "cli"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+#chrono = "0.4.38"
+miniserde = "0.1.39"
+clap = { version = "4.5.4", features = ["derive"]}
+
+graph1 = { git = "https://github.com/dipdowel/graph1", tag = "v0.0.4-alpha" }
+#graph1 = { path = "../../../graph1" }
+compiler = { path = "../compiler" }
+
+
+[profile.release]
+debug = false
+#opt-level = 'z' # or 's' for size optimization with a balance between size and speed
+opt-level = 's' # or 's' for size optimization with a balance between size and speed
+lto=true

@@ -1,0 +1,175 @@
+body {
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: sans-serif;
+    padding: 1em;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+
+select, input {
+    background: #161b22;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 0.5em;
+    margin: 0.5em 0;
+}
+
+input {
+    min-width: 80%;
+}
+
+input[type="file"] {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+canvas {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    margin-top: 1em;
+}
+
+.info {
+    background: #1a222e;
+    padding: 12px ;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.col {
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.content {
+
+    /*width: 100%;*/
+    line-height: 1.6;
+    color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    background: #161b22;
+    margin-top:0;
+
+}
+
+form {
+    max-width: 600px;
+}
+
+.info input {
+    width: 92%;
+}
+
+form label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.3em;
+
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+
+}
+
+button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+    background-color: #238636;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #333;
+}
+
+button[type="submit"]:hover {
+    background-color: #2ea043;
+}
+
+#formMessage {
+    margin-top: 1em;
+    font-weight: bold;
+}
+
+/* Links */
+a {
+    color: #58a6ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Tabs */
+nav.tab-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #314057;
+}
+
+nav.tab-bar button {
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #21262d none;
+    color: #c9d1d9;
+    padding: 0.6em 1em;
+    border: 1px solid #30363d;
+    font-weight: bold;
+    border-radius: 6px 6px 0 0;
+    margin-right: 4px;
+}
+
+nav.tab-bar button:hover {
+    background-color: #516685;
+}
+
+nav.tab-bar button.active-tab {
+    font-weight: bold;
+    color: white;
+    background: #314057;
+}
+
+/* Tab sections */
+.tab-section,
+section.tab-section {
+    display: none;
+}
+
+.tab-section.active,
+section.tab-section.active {
+    display: block;
+}
+
+.code-like {
+    background: #30363d; padding:4px 6px; border-radius: 4px;
+}

@@ -1,0 +1,30 @@
+{
+  "char_order": " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~",
+  "default_char": "?",
+  "spacing": {
+    "kerning_px": 2,
+    "leading_px": 10
+  },
+  "meta": {
+    "font_ver": 1002,
+    "date_year": 2008,
+    "date_month": 2,
+    "date_day": 6,
+    "font_name": "cc_red_alert_inet",
+    "author_signature": "N3tRunn3r (N3tRunn3r@hotmail.de)"
+  },
+  "sample_text": [
+    "Pixel fonts are a type of digital typography. They are characterized by their simple, blocky appearance.",
+    "They are designed to be used at small sizes on screens. This makes them ideal for low-resolution displays.",
+    "Each character in a pixel font is made up of pixels. These pixels are arranged in a grid to form letters and symbols.",
+    "This results in a blocky, retro appearance. The design is reminiscent of early computer graphics and video games.",
+    "Pixel fonts became popular in the 1980s and 1990s. They were widely used in video games and digital art.",
+    "In 1982, the Commodore 64 used pixel fonts. This computer was known for its distinctive 8x8 pixel characters.",
+    "Designing pixel fonts requires careful attention to detail. Each pixel must be meticulously placed to form recognizable shapes.",
+    "In 1985, the Nintendo Entertainment System (NES) used pixel fonts. These fonts contributed to the iconic look of NES games.",
+    "Pixel fonts can be monospaced or proportional. Monospaced fonts have characters of equal width, while proportional fonts do not.",
+    "Old-school smileys, like :-) and :-D, predate emojis. They were used in the 1980s to express emotions in text.",
+    "Pixel fonts also include numbers and special characters. Numbers (0-9) and symbols like +, -, *, /, <, >, (, ), #, &, $ are essential.",
+    "In 1995, the first graphical web browser was introduced. Pixel fonts were essential for creating readable text on low-res screens."
+  ]
+}

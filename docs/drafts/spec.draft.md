@@ -122,6 +122,8 @@ The default character is stored as two `u16` words (in the header in \[9] and \[
 ### Purpose of the Default Character
 
 The default character acts as a fallback when a requested character is not found in the font's Character Order String.
+The default character **must** be present in the `Character Order String`! If it is not present, the font generator should refuse to compile the font.
+
 * **Ensures robustness**: Prevents rendering failures when encountering unknown characters, no extra error handling needed.
 * **Customizable appearance**: Designers may use a question mark, box, or other symbol.
 
