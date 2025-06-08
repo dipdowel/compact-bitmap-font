@@ -113,26 +113,6 @@ a:hover {
     text-decoration: underline;
 }
 
-nav {
-    margin-bottom: 1em;
-}
-
-.tab-button {
-    background-color: #21262d;
-    color: #c9d1d9;
-    padding: 0.6em 1em;
-    border: 1px solid #30363d;
-    cursor: pointer;
-    font-weight: bold;
-    border-radius: 6px 6px 0 0;
-    margin-right: 4px;
-}
-
-.tab-button.active {
-    background-color: #0d1117;
-    border-bottom: none;
-}
-
 .tab-section {
     display: none;
 }
@@ -160,4 +140,72 @@ nav {
     background: #0d1117;
     padding: 0.2em 0.4em;
     border-radius: 4px;
+}
+
+
+
+
+
+
+h1 {
+    margin-top: 0;
+}
+
+input[type="file"] {
+    margin-top: 0.5rem;
+}
+
+button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+}
+
+button:hover {
+    background-color: #333;
+
+}
+
+.info {
+    margin: 1rem 0;
+}
+
+.form-actions {
+    margin-top: 1rem;
+}
+
+/* Tabs navigation styles */
+nav.tab-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #314057;
+}
+nav.tab-bar button {
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #21262d none;
+    color: #c9d1d9;
+    padding: 0.6em 1em;
+    border: 1px solid #30363d;
+    font-weight: bold;
+    border-radius: 6px 6px 0 0;
+    margin-right: 4px;
+}
+nav.tab-bar button:hover {
+     background-color: #516685;
+}
+nav.tab-bar button.active-tab {
+    font-weight: bold;
+    color:white;
+    background: #314057;
+}
+
+/* Tab content sections */
+section.tab-section {
+    display: none;
+}
+section.tab-section.active {
+    display: block;
 }

@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,31 +6,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CBF compiler and viewer</title>
   <link rel="stylesheet" href="/src/style.css" />
+
+
 </head>
 <body>
 <div id="app">
-<h1>Online CBF font compiler</h1>
-  Welcome! Please refer to the <a href="#">README</a> for details.
-  <form id="fontForm">
-    <div class="info">
-      <label for="pngInput">Font source image with glyphs (a PNG file)</label><br />
-      <input type="file" id="pngInput" accept=".png" required />
-    </div>
+  <h1>Online CBF font compiler</h1>
 
-    <div class="info">
-      <label for="jsonInput">Font configuration (a JSON file)</label><br />
-      <input type="file" id="jsonInput" accept=".json" required />
-    </div>
+  <nav class="tab-bar">
+    <button data-tab="font-compiler-section">Font Compiler</button>
+    <button data-tab="font-viewer-section">Font Viewer</button>
+    <button data-tab="docs-and-guides-section">Docs & Guides</button>
+  </nav>
 
+  <section id="font-compiler-section" class="tab-section active">
+    <form id="fontForm">
+      <div class="info">
+        <label for="pngInput">Font source image with glyphs (a PNG file)</label><br />
+        <input type="file" id="pngInput" accept=".png" required />
+      </div>
+      <div class="info">
+        <label for="jsonInput">Font configuration (a JSON file)</label><br />
+        <input type="file" id="jsonInput" accept=".json" required />
+      </div>
+      <div class="form-actions">
+        <button type="submit">Upload</button>
+      </div>
+    </form>
+    <div id="formMessage" class="info" style="display: none;"></div>
+  </section>
 
-    <div class="form-actions">
-      <button type="submit">Upload</button>
-    </div>
-  </form>
+  <section id="font-viewer-section" class="tab-section">
+    <p>Font viewer will go here...</p>
+  </section>
 
-  <div id="formMessage" class="info" style="display: none;"></div>
-
-
+  <section id="docs-and-guides-section" class="tab-section">
+    <p>Documentation and guides will be placed here...</p>
+  </section>
 </div>
 <script type="module" src="/src/main.ts"></script>
 </body>
