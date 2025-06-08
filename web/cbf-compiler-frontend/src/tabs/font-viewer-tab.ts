@@ -47,6 +47,7 @@ interface PixelFont {
     charOrder: string[];
     widths: Uint8Array;
     spacing: Spacing;
+    defaultChar: string;
     meta: PixelFontMeta;
     byteSize: number;
 }
@@ -66,6 +67,21 @@ const fontUpload = document.getElementById("fontUpload") as HTMLInputElement;
 const scaleSelect = document.getElementById("scaleSelect") as HTMLSelectElement;
 const metadata = document.getElementById("metadata")!;
 
+function decodeDefaultChar(defaultCharHigher:number, defaultCharLower:number):string {
+    let bytes;
+
+    if (defaultCharHigher === 0) {
+        // Single-byte character (like ASCII)
+        bytes = new Uint8Array([defaultCharLower]);
+    } else {
+        // Likely multi-byte UTF-8
+        bytes = new Uint8Array([defaultCharHigher, defaultCharLower]);
+    }
+
+    return new TextDecoder().decode(bytes);
+}
+
+
 /**
  * Parses a raw ArrayBuffer in .cbf format into a PixelFont.
  */
@@ -81,8 +97,10 @@ function loadFontFromBuffer(buf: ArrayBuffer): PixelFont {
         header.push(view.getUint16(i * 2, true));
     }
 
-    const [, , fontNameSize, authorSize, charOrderSize, charWidthsSize,
-        fontImageWidth, fontImageHeight, spacingProps, , , , year, monthDay
+    // @ts-ignore
+    const [magicNumber, cbfVersion , fontNameSize, authorSize, charOrderSize, charWidthsSize,
+        // @ts-ignore
+        fontImageWidth, fontImageHeight, spacingProps, defaultCharLower , defaultCharHigher ,fontVersion , year, monthDay
     ] = header;
 
     let offset = 28;
@@ -103,6 +121,8 @@ function loadFontFromBuffer(buf: ArrayBuffer): PixelFont {
     const leading = spacingProps >> 8;
     const bitmap = new Uint8Array(buf, offset);
 
+    // Decode the default char from 2 bytes
+    const defaultChar = decodeDefaultChar(defaultCharHigher, defaultCharLower);
     return {
         fontImageWidth,
         fontImageHeight,
@@ -110,12 +130,13 @@ function loadFontFromBuffer(buf: ArrayBuffer): PixelFont {
         charOrder,
         widths,
         spacing: { kerning_px: kerning, leading_px: leading },
+        defaultChar,
         meta: {
             fontName,
             author,
             year,
             month: monthDay >> 8,
-            day: monthDay & 0xff
+            day: monthDay & 0xff,
         },
         byteSize: buf.byteLength
     };
@@ -128,7 +149,10 @@ function loadFontFromFile(file: File): void {
     const reader = new FileReader();
     reader.onload = () => {
         try {
-            if (!reader.result) throw new Error("Empty result");
+            if (!reader.result) {
+                throw new Error("Empty result");
+            }
+
             const buf = reader.result as ArrayBuffer;
             currentFont = loadFontFromBuffer(buf);
             updateFontInfoUI();
@@ -169,7 +193,7 @@ function updateRender(): void {
     ctx.fillStyle = "#0d1117";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const { fontImageWidth, fontImageHeight, bitmap, charOrder, widths, spacing } = currentFont;
+    const { fontImageWidth, fontImageHeight, bitmap, charOrder, widths, spacing, defaultChar } = currentFont;
 
     const glyphMap: Record<string, GlyphRect> = {};
     let xOffset = 0;
@@ -182,8 +206,11 @@ function updateRender(): void {
     ctx.fillStyle = "#ffffff";
 
     for (const ch of text) {
-        const glyph = glyphMap[ch];
-        if (!glyph) continue; // FIXME: fallback to default char
+        let glyph = glyphMap[ch];
+
+        if (!glyph) {
+            glyph = glyphMap[defaultChar];
+        }
 
         for (let y = 0; y < fontImageHeight; y++) {
             for (let x = 0; x < glyph.w; x++) {

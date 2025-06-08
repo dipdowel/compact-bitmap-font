@@ -1,0 +1,20 @@
+{
+  "char_order": " ABCDEF",
+  "default_char": "A",
+  "spacing": {
+    "kerning_px": 2,
+    "leading_px": 10
+  },
+  "meta": {
+    "font_ver": 1002,
+    "date_year": 2008,
+    "date_month": 2,
+    "date_day": 6,
+    "font_name": "ABBA",
+    "author_signature": "FACE"
+  },
+  "sample_text": [
+    "ABCDEF",
+    "ABCDEF"
+  ]
+}
