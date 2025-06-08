@@ -1,6 +1,8 @@
 
 import { validateFontConfig } from '../validate-font-config';
 
+console.log("font-compiler-tab.ts");
+
 export function setupFontCompilerTab() {
   const form = document.getElementById('fontForm') as HTMLFormElement;
   const pngInput = document.getElementById('pngInput') as HTMLInputElement;
