@@ -7,9 +7,8 @@
   },
   "meta": {
     "font_ver": 1002,
-    "date_month": 2,
-    "date_day": 6,
-    "font_name": "cc_red_alert_inet",
+
+    "font_name": "cc_red_alert_lan",
     "author_signature": "N3tRunn3r (N3tRunn3r@hotmail.de)"
   },
   "sample_text": [
@@ -26,4 +25,8 @@
     "Pixel fonts also include numbers and special characters. Numbers (0-9) and symbols like +, -, *, /, <, >, (, ), #, &, $ are essential.",
     "In 1995, the first graphical web browser was introduced. Pixel fonts were essential for creating readable text on low-res screens."
   ]
+
+
+
+
 }

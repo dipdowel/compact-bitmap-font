@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "copy-assets": "cp markdown.css dist/markdown.css && cp LICENSE dist/LICENSE",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && yarn copy-assets",
     "preview": "vite preview"
   },
   "devDependencies": {

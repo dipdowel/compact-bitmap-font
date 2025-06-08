@@ -117,6 +117,7 @@ Here's the JSON with the configuration and metadata for the [PNG with glyphs](./
 
 - `default_char`
   - The default character acts as a fallback when a character does not exist in the font.
+  - ⚠️ The default **must** be a character present in the `char_order` string!
   - If the user tries to display `ä` but it's not in the font, then the default character (e.g. `?`) is rendered instead.
   - ⚠️ If `default_char` is not specified, the compiler will refuse to build the font!
 

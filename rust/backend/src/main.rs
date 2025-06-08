@@ -9,13 +9,19 @@ use std::{
     io::{Cursor, Write},
     net::SocketAddr,
 };
+use axum::http::{HeaderValue, Method};
 use tokio::net::TcpListener;
 use zip::{ZipWriter, write::FileOptions};
 use compiler::compile_font;
+use tower_http::cors::{CorsLayer, Any};
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use tower_http::trace::TraceLayer;
 
 /// POST /upload — Accepts a PNG and a JSON file, returns a zip archive.
 /// Responds with 400 Bad Request if either file is missing or invalid.
 async fn upload(mut multipart: Multipart) -> Response {
+
+    println!("Received multipart upload");
     let mut png_data = None;
     let mut json_data = None;
 
@@ -26,8 +32,8 @@ async fn upload(mut multipart: Multipart) -> Response {
         let data = field.bytes().await.unwrap_or_default();
 
         match (name.as_str(), content_type.as_str()) {
-            ("png", "image/png") => png_data = Some(data),
-            ("json", "application/json") => json_data = Some(data),
+            ("png_input", "image/png") => png_data = Some(data),
+            ("json_input", "application/json") => json_data = Some(data),
             _ => {}
         }
     }
@@ -38,7 +44,7 @@ async fn upload(mut multipart: Multipart) -> Response {
         _ => return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .header("Content-Type", "text/plain; charset=utf-8")
-            .body("Missing PNG or JSON file".into())
+            .body("err 701: Missing PNG or JSON file".into())
             .unwrap()
     };
 
@@ -52,7 +58,7 @@ async fn upload(mut multipart: Multipart) -> Response {
                 return Response::builder()
                     .status(StatusCode::BAD_REQUEST)
                     .header("Content-Type", "text/plain")
-                    .body("Invalid UTF-8 in JSON file".into())
+                    .body("err 708: Invalid UTF-8 in JSON file".into())
                     .unwrap();
             }
         };
@@ -64,7 +70,7 @@ async fn upload(mut multipart: Multipart) -> Response {
             return Response::builder()
                 .status(StatusCode::BAD_REQUEST)
                 .header("Content-Type", "text/plain")
-                .body("Failed to compile font from provided assets".into())
+                .body("err 715: Failed to compile font from provided assets".into())
                 .unwrap();
         }
         let compiled = compiled.unwrap();
@@ -80,9 +86,6 @@ async fn upload(mut multipart: Multipart) -> Response {
         let cursor = Cursor::new(&mut buffer);
         let mut zip = ZipWriter::new(cursor);
         let opts: FileOptions<'_, ()> = FileOptions::default();
-
-
-
 
         zip.start_file( format!("{}.sample.png", compiled.file_name.clone()), opts).unwrap();
         zip.write_all(&png_data).unwrap();
@@ -103,12 +106,22 @@ async fn upload(mut multipart: Multipart) -> Response {
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/upload", post(upload));
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    println!("Starting the CBF compiler server...");
+    // Initialize tracing (logs to stdout by default)
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
+
+    let cors = CorsLayer::permissive();
+
+    let app = Router::new().route("/upload", post(upload))
+        .layer(cors).layer(TraceLayer::new_for_http());
+    
+    
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3033));
     let listener = TcpListener::bind(addr).await.unwrap();
-
     println!("Listening on http://{}", addr);
-
     axum::serve(listener, app.into_make_service())
         .await
         .unwrap();

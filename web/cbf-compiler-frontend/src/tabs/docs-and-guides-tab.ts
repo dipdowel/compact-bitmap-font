@@ -8,12 +8,8 @@ export async function setupDocsAndGuidesTab() {
         console.warn("Docs cannot be loaded!");
         return;
     }
-    const response = await fetch("/public/font-designer-guide.cbf.md");
+    const response = await fetch("/font-designer-guide.cbf.md");
     const markdownText = await response.text();
 
     targetElement!.innerHTML = await marked(markdownText);
-    // console.log(markdownText);
-
 }
-
-console.log("docs-and-guides-tab.ts");

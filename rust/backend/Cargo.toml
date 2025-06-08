@@ -8,7 +8,9 @@ edition = "2024"
 axum = "0.8.4"
 axum-extra = { version = "0.10.1", features = ["multipart"] }
 tokio = { version = "1.45.1", features = ["full"] }
-tower = "0.5.2"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+
 zip = "4.0.0"
-mime = "0.3.17"
+
 compiler = { path = "../compiler" }
+tracing-subscriber = "0.3.19"

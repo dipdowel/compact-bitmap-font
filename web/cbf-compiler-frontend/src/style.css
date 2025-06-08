@@ -37,7 +37,7 @@ canvas {
 
 .info {
     background: #1a222e;
-    padding: 22px 32px 12px 22px;
+    padding: 12px ;
     border-radius: 8px;
     margin: 1rem 0;
 }
@@ -72,24 +72,24 @@ canvas {
 
 form {
     max-width: 600px;
-    /*line-height: 1.6;*/
-    /*color: white;*/
-    /*padding: 2rem;*/
-    /*border-radius: 8px;*/
-    /*background: #161b22;*/
-    /*margin-top:0;*/
+}
+
+.info input {
+    width: 92%;
 }
 
 form label {
     font-weight: bold;
     display: block;
     margin-bottom: 0.3em;
+
 }
 
 .form-actions {
     display: flex;
     justify-content: flex-end;
     margin-top: 1rem;
+
 }
 
 button {
@@ -168,4 +168,8 @@ section.tab-section {
 .tab-section.active,
 section.tab-section.active {
     display: block;
+}
+
+.code-like {
+    background: #30363d; padding:4px 6px; border-radius: 4px;
 }

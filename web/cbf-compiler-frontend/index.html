@@ -13,58 +13,66 @@
 <body>
 <div id="app">
   <h1 style="border: none">Online CBF font compiler</h1>
-
+  <div class="info">CBF = Compact Bitmap Font. Such fonts are tiny, often less than 1 kilobyte in size!</div>
   <nav class="tab-bar">
     <button data-tab="font-compiler-section">Font Compiler</button>
     <button data-tab="font-viewer-section">Font Viewer</button>
     <button data-tab="docs-and-guides-section">Docs & Guides</button>
   </nav>
 
-<!--  <section id="font-compiler-section" class="tab-section active">-->
-  <section id="font-compiler-section" class="tab-section">
-    <div class="content">
-      <h1> Upload your font assets here </h1>
 
-      Please see <span style="background: #30363d; padding:6px; border-radius: 4px;">Docs & Guides</span> for
+<!-- ===[ COMPILER SECTION ]======================================================================================= -->
+
+  <section id="font-compiler-section" class="tab-section active">
+<!--  <section id="font-compiler-section" class="tab-section">-->
+    <div class="content">
+      <h1>Compiler: upload your font assets here </h1>
+
+      Please see <span class="code-like">Docs & Guides</span> for
       details on the source files for generating your font.
 
-      <form id="fontForm" >
+      <form id="font-assets-form">
+
+        <div class="info">
+        <label for="png_input">Font source image with glyphs (a PNG file)</label>
+        <input type="file" id="png_input" accept="image/png" required />
+        </div>
       <div class="info">
-        <label for="pngInput">Font source image with glyphs (a PNG file)</label><br />
-        <input type="file" id="pngInput" accept=".png" required />
-      </div>
-      <div class="info">
-        <label for="jsonInput">Font configuration (a JSON file)</label><br />
-        <input type="file" id="jsonInput" accept=".json" required />
+        <label for="json_input">Font configuration (a JSON file)</label>
+        <input type="file" id="json_input" accept="application/json" required />
       </div>
       <div class="form-actions">
         <button type="submit">Upload</button>
       </div>
     </form>
     <div id="formMessage" class="info" style="display: none;"></div>
+
+      <br />
+      <a href="/media/sample-font-assets.zip" >Download sample font assets</a> to try them with the compiler!
     </div>
   </section>
 
-  <section id="font-viewer-section" class="tab-section active">
+  <!-- ===[ FONT VIEWER SECTION ]======================================================================================= -->
+
+  <section id="font-viewer-section" class="tab-section">
+<!--  <section id="font-viewer-section" class="tab-section active">-->
 
     <div class="content">
 
-      <div class="container">
-        <div class="col left"><h1>CBF Font Viewer</h1></div>
-        <div class="col right">
-          <div class="info">CBF = Compact Bitmap Font. Such fonts are tiny, often less than 1 kilobyte in size!</div>
-        </div>
+      <h1>Viewer: upload and view your CBF font here</h1>
+
+      Please see <span class="code-like">Docs & Guides</span> for
+      details on the font file.
+
+      <form>
+      <div class="info">
+        <label for="fontUpload">Select a <span class="code-like">.cbf</span> file to upload:
+          <input type="file" id="fontUpload" accept=".cbf" />
+        </label>
       </div>
+      </form>
 
 
-
-
-      <label>Font:
-        <select id="fontSelect">
-          <option value="cc_red_alert_inet.cbf">cc_red_alert_inet.cbf</option>
-          <option value="cc_red_alert_lan.cbf">cc_red_alert_lan.cbf</option>
-        </select>
-      </label><br/>
 
       <label>Scale:
         <select id="scaleSelect">
@@ -79,7 +87,7 @@
         </select>
       </label><br/>
 
-      <label>Text:
+      <label>Edit me:
         <input type="text" id="inputText" maxlength="80" value="Hi! Welcome to the online CBF font viewer!" />
       </label><br/>
 
@@ -90,7 +98,7 @@
     </div>
   </section>
 
-
+  <!-- ===[ DOCS & GUIDES SECTION ]=================================================================================== -->
 
   <section id="docs-and-guides-section" class="tab-section">
 <!--  <section id="docs-and-guides-section" class="tab-section active">-->
