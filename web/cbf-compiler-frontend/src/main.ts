@@ -1,4 +1,5 @@
-
+import './style.css';
+import { validateFontConfig } from './validate-font-config';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('fontForm') as HTMLFormElement;
@@ -6,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const jsonInput = document.getElementById('jsonInput') as HTMLInputElement;
     const message = document.getElementById('formMessage') as HTMLDivElement;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const pngFile = pngInput.files?.[0];
@@ -30,10 +31,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // If all checks pass
-        showMessage('Files are valid and ready to be uploaded!', true);
+        // ✅ Validate the JSON
+        try {
+            const jsonText = await jsonFile.text();
+            const jsonData = JSON.parse(jsonText);
+            const result = validateFontConfig(jsonData);
 
-        // Optionally: process the files here (read contents, send to backend, etc.)
+            if (!result.valid) {
+                showMessage(`JSON invalid: ${result.message}`, false);
+                return;
+            }
+
+            showMessage('Files are valid and ready to be uploaded!', true);
+        } catch (err) {
+            showMessage('Failed to read or parse JSON file.', false);
+        }
     });
 
     function showMessage(msg: string, success: boolean) {
