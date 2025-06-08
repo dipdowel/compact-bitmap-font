@@ -112,3 +112,52 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+nav {
+    margin-bottom: 1em;
+}
+
+.tab-button {
+    background-color: #21262d;
+    color: #c9d1d9;
+    padding: 0.6em 1em;
+    border: 1px solid #30363d;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 6px 6px 0 0;
+    margin-right: 4px;
+}
+
+.tab-button.active {
+    background-color: #0d1117;
+    border-bottom: none;
+}
+
+.tab-section {
+    display: none;
+}
+
+.tab-section.active {
+    display: block;
+}
+
+/* Markdown styling */
+.markdown-body {
+    line-height: 1.6;
+    padding: 1em;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+}
+
+.markdown-body h1, .markdown-body h2 {
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 0.3em;
+    margin-top: 1em;
+}
+
+.markdown-body code {
+    background: #0d1117;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+}
