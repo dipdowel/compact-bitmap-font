@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite + TS</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+<div id="app">
+<h1>Online CBF font compiler</h1>
+  Welcome! Please refer to the <a href="#">README</a> for details.
+  <form id="fontForm">
+    <div class="info">
+      <label for="pngInput">Font source image with glyphs (a PNG file)</label><br />
+      <input type="file" id="pngInput" accept=".png" required />
+    </div>
+
+    <div class="info">
+      <label for="jsonInput">Font configuration (a JSON file)</label><br />
+      <input type="file" id="jsonInput" accept=".json" required />
+    </div>
+
+
+    <div class="form-actions">
+      <button type="submit">Upload</button>
+    </div>
+  </form>
+
+  <div id="formMessage" class="info" style="display: none;"></div>
+
+
+</div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
