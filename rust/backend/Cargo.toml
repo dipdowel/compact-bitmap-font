@@ -13,4 +13,4 @@ tower-http = { version = "0.5", features = ["cors", "trace"] }
 zip = "4.0.0"
 
 compiler = { path = "../compiler" }
-tracing-subscriber = "0.3.19"
+tracing-subscriber = "0.3.22"
