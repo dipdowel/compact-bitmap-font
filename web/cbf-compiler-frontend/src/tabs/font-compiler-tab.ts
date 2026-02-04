@@ -61,8 +61,8 @@ export function setupFontCompilerTab()  {
     formData.append("json_input", jsonFile);
 
     try {
-      const res = await fetch("http://127.0.0.1:3033/upload", {
-      // const res = await fetch("/da_font_upload.php", {
+      // const res = await fetch("http://127.0.0.1:3033/upload", {
+      const res = await fetch("/cbf_upload.php", {
         method: "POST",
         body: formData,
       });
